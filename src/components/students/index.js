@@ -9,14 +9,14 @@ const StudentIndex = () => {
   const { students, prefixes } = useContext(GlobalContext);
   return <>
     <SEO title="Home" />
-    <div class="students">
+    <div class="students student-list">
       <div class="container">
         {/* {users.length === 0 ? <Loading /> : users.map(st => <article class="student-info student-info-index" style={{ backgroundImage: `url(${oldPaper})` }}> */}
-        <div className="student-list">
+        <div>
           {students.value.map(st => <article>
             <div class="student-box">
               <h2>
-                <Link to={`${prefixes.value.students}/${st.fullname}`}>
+                <Link to={`/${prefixes.value.students}/${st.fullname}`}>
                   {st.fullname}
                   <span class="age">{st.age}歳　{st.sex}</span>
                 </Link>

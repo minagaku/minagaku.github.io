@@ -9,6 +9,7 @@ import GlobalContext from "../contexts/GlobalContext";
 import StudentIndex from "../components/students";
 import { Router } from "@reach/router";
 import "./global.sass"
+import StudentPage from "./students/student";
 
 const App = ({ data, location }) =>
 {
@@ -16,8 +17,8 @@ const App = ({ data, location }) =>
     if (prefixes.value.students !== data.site.siteMetadata.prefixes.students) prefixes.set(data.prefixes);
     return <Layout>
         <Router>
+            <StudentPage path={`${prefixes.value.students}/:name`} />
             <StudentIndex path={`${prefixes.value.students}/`} />
-            <StudentIndex path={`${prefixes.value.students}/:name`} />
         </Router>
     </Layout>
 }

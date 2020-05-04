@@ -10,14 +10,11 @@
         border-radius: 2px
         padding-bottom: 30px
         margin-bottom: -40px
-        transition: 0.1s ease margin-bottom
-        &:hover
-            margin-bottom: -20px
-            transform: rotate(0.5deg)
         .student-box
             background: hsla(0,0%,100%,.4);
             box-shadow: 0 0 10px 10px hsla(0,0%,100%,.4);
             padding: 1em;
+            margin-bottom: -1em
         h2
             margin-top: 0
             font-size: 1.5rem
@@ -37,10 +34,96 @@
         position: absolute
         top: 1em
         right: 1em
-    .chara-card
-        position: absolute
-        top: 1em
-        right: calc( 1em + 320px )
-        height: 100px
-        box-shadow: -1px -1px 3px #6666;
 
+.student-list
+    article
+        transition: 0.1s ease margin-bottom
+        &:hover
+            margin-bottom: -20px
+            transform: rotate(0.5deg)
+        .chara-card
+            position: absolute
+            top: 1em
+            right: calc( 1em + 320px )
+            height: 100px
+            box-shadow: -1px -1px 3px #6666;
+
+.student-detail
+    display: flex
+    .student-info
+        flex-grow: 1
+    .student-info2
+        background: #FFFFFF66;
+        box-shadow: 0 0 10px 10px #FFFFFF66;
+        padding: 1em;
+        position: relative
+        .chara-card
+            grid-row: 1/2;
+            grid-area: a1;
+            margin: 1em;
+            max-width: 300px;
+            img
+                box-shadow: 3px 3px 5px #00000066;
+                margin: 0;
+                background: white
+
+        .mini-grid
+            display: grid
+            grid-template: 1fr 1fr / 1fr 1fr
+            grid-template-areas: "a1 a2" "a1 a3"
+            .a2
+                grid-area: a2
+            .a3
+                grid-area: a3
+        .mini-table
+            display: flex
+            width: 100%
+            table
+                width: auto
+                margin-right: 1em
+                min-width: 30%
+
+        h3
+            margin: 1em 0 0.5em
+        .box
+            max-height: 12em;
+            border: 1px;
+            white-space: pre-line;
+            overflow-y: auto;
+            background: hsla(0,0%,100%,.4);
+            box-shadow: 0 0 10px 5px hsla(0,0%,100%,.4);
+            padding: .3em
+    
+.side-fusens
+    margin-right: -10px;
+
+.side-fusen
+    background:  url(../../images/cream.jpg);
+    display:  block;
+    margin: 0.2em;
+    border-left: 1em #933 solid;
+    box-shadow: 1px 1px 3px #0009;
+    display: flex
+    height: 2em
+    .fusen-chara-card
+        height: 2em 
+        width: 2em
+    img
+        height: 2em
+        width: auto
+        margin: 0
+        
+    a
+        display:  block;
+        text-decoration:  none;
+        color: #300;
+        white-space:  nowrap;
+        width: 150px;
+        padding:  0.5em;
+        font-size: 0.8rem;
+
+    &:hover 
+        margin-left: -20px;
+        transition:  0.1s margin-left;
+.side-fusen.current
+    border-left: 1em #336 solid;
