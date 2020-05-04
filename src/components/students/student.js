@@ -25,6 +25,7 @@ const StudentPage = ({ name }) => {
     const st = students.value.find(x => x.fullname === name);
     if (!st) return <div>学生 {name} が見つかりません</div>
     return <>
+        <SEO title={name} />
         <div class="students student-detail">
             <SideFusenList students={students.value} current={name} prefix={prefixes.value.students} />
             <article class="student-info">
