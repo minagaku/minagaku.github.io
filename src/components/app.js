@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { Link, graphql } from "gatsby"
 
 import Bio from "../components/bio"
@@ -13,8 +13,18 @@ import StudentPage from "./students/student";
 
 const App = ({ data, location }) =>
 {
-    const { prefixes } = useContext(GlobalContext);
+    const { loading, students, prefixes } = useContext(GlobalContext);
     if (prefixes.value.students !== data.site.siteMetadata.prefixes.students) prefixes.set(data.prefixes);
+    useEffect(() => {
+        loading.set(true)
+        fetch(`https://script.google.com/macros/s/AKfycby2ZIx5H7J96SFGuLzLoU0ePgqgcq6ILYFowa6rQ70nmhVLR7MU/exec`)
+            .then(r => r.json())
+            .then(rd => {
+                students.set(rd.sort((x, y) => x.fullname.localeCompare(y.fullname, 'ja')));
+                loading.set(false)
+            })
+    }, []);
+
     return <Layout>
         <Router>
             <StudentPage path={`${prefixes.value.students}/:name`} />

@@ -3,13 +3,15 @@ import PropTypes from "prop-types"
 import React, { useContext } from "react"
 import logo from "../images/logo.svg"
 import GlobalContext from "../contexts/GlobalContext"
+import Loading from "./loading";
 
 const Header = ({ siteTitle }) => {
-  const {prefixes} = useContext(GlobalContext);
+  const { loading, prefixes } = useContext(GlobalContext);
   return <header>
     <Link className="link" to={`/${prefixes.value.students}`}>
       学
     </Link>
+    { loading.value ? <Loading showText={false} /> : "" }
 
     <h1 style={{ margin: 0 }}>
       <Link to="/">

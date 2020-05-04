@@ -4,13 +4,12 @@ import Mahoujin from "../images/mahoujin.inline.svg"
 import mj from "../images/mahoujin.svg"
 
 
-const Loading = () => (
+const Loading = ({ showText }) => (
   <>
-    <Mahoujin />
+    {/* <Mahoujin />  */}
     <div class="loading">
-      {/* <div class="load-mahou" /> */}
       <img src={mj} />
-      <div>Loading...</div>
+      {showText ? <div>Loading...</div> : ""}
     </div>
   </>
 )
