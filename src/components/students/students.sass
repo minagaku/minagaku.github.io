@@ -1,0 +1,46 @@
+
+.students
+    margin-top: 4em
+    article
+        background-image: url("../../images/old-paper-back.jpg")
+        padding: 1.5em
+        box-shadow: 3px 3px 3px #0003, 0 0 5px rgba(0, 0, 0, 0.5), inset 0 0 50px rgba(0, 0, 0, 0.1)
+        position: relative
+        z-index: 5
+        border-radius: 2px
+        padding-bottom: 30px
+        margin-bottom: -40px
+        transition: 0.1s ease margin-bottom
+        &:hover
+            margin-bottom: -20px
+            transform: rotate(0.5deg)
+        .student-box
+            background: hsla(0,0%,100%,.4);
+            box-shadow: 0 0 10px 10px hsla(0,0%,100%,.4);
+            padding: 1em;
+        h2
+            margin-top: 0
+            font-size: 1.5rem
+            a
+                color: black
+                text-decoration: none
+                font-family: srif
+                padding: 1em 0
+            .sex
+                font-size: 0.5em
+                margin-left: 0.5em
+            .age
+                margin-left: 1em;
+                font-size: 0.5em;
+    .fusen-wrapper
+        transform: rotate(-3deg)
+        position: absolute
+        top: 1em
+        right: 1em
+    .chara-card
+        position: absolute
+        top: 1em
+        right: calc( 1em + 320px )
+        height: 100px
+        box-shadow: -1px -1px 3px #6666;
+
