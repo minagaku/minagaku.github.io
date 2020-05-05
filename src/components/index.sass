@@ -1,12 +1,12 @@
 .home
-    background: url("../images/matterhorn.jpg")
+    background: url("../images/matterhorn.jpg"), #FFFFFF99
     background-repeat: no-repeat
     background-position: top
     background-size: contain
     padding-top: 120px !important
     /* Thanks: https://www.photo-ac.com/main/detail/2787923 */
     display: grid
-    grid-template: auto auto /1fr 500px
+    grid-template: 200px auto /1fr 500px
     grid-template-areas: "t1 t3" "t2 t3"
 
     main
@@ -17,6 +17,7 @@
     .minagaku-tl
         grid-area: t3
         width: 480px
+        margin-left: 10px
         .tl-title
             background: #00aceeCC
             color: white
@@ -83,3 +84,75 @@
                 grid-area: a4
                 background: #acee0066
                 border-top-right-radius: 5px
+    .kuguri-area
+        display: flex
+        .kuguri-img
+            height: 200px
+            width: 200px
+            background: url(../images/kuguriSD1.png) no-repeat
+            background-size: cover
+            animation: jump 1.0s linear 0.2s 1 forwards 
+            &:hover
+                animation: hoveranime 1.0s linear 1 forwards 
+
+        .text
+            flex-grow: 1
+            .name
+                font-weight: bold
+                color: #CC6666
+                margin-bottom: 0.5em
+                display: block
+                
+
+            background: #FFFFCC
+            padding: 1rem
+            position: relative
+            border-radius: 5px
+            /* アイコンを左に表示 */
+            &::before
+                content: '';
+                position: absolute;
+                display: block;
+                width: 0;
+                height: 0;
+                left: -20px;
+                bottom: 20px;
+                border-right: 20px solid #FFFFCC
+                border-top: 10px solid transparent;
+                border-bottom: 10px solid transparent;
+
+@keyframes hoveranime
+    0%
+        transform: scale(1, 1) translate(0%, 0%)
+    20%
+        transform: scale(1, 0.9) translate(0%, 10%)
+        background-image: url(../images/kuguriSD2.png)
+    80%
+        transform: scale(1, 1) translate(0%, 0%)
+
+
+@keyframes jump
+  0%
+    transform: scale(1, 1) translate(0%, 0%)
+
+  10%
+    transform: scale(1.0, 0.9) translate(0%, 0%)
+
+  20%
+    transform: scale(1.0, 1.0) translate(0%, -20%)
+
+  30%
+    transform: scale(1.0, 0.9) translate(0%, 0%)
+  40%
+    transform: scale(1.0, 0.9) translate(0%, 0%)
+
+  50%
+    transform: scale(1.0, 1.0) translate(0%, -20%)
+    background-image: url("../images/kuguriSD2.png")
+  60%
+    transform: scale(1.0, 0.9) translate(0%, 0%)
+    background-image: url("../images/kuguriSD2.png")
+
+  100%
+    transform: scale(1, 1) translate(0%, 0%)
+    background-image: url("../images/kuguriSD1.png")
