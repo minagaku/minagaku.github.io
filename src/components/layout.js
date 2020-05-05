@@ -7,7 +7,7 @@ import Header from "./header";
 const Layout = ({ location, title, children }) => {
   return (
     <div>
-      <Header />
+      <Header location={location} />
       <main>{children}</main>
       <footer>
       </footer>

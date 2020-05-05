@@ -22,6 +22,7 @@ const GlobalProvider = (props) => {
     const [students, setStudentsState] = useState(tryGetStudents());
     const [loading, setLoading] = useState(false);
     const [prefixes, setPrefixes] = useState(defaultState.prefixes);
+    const [tweets, setTweets] = useState([])
     const { children } = props
     const setStudents = (newUsers) => {
         console.log(newUsers)
@@ -31,7 +32,8 @@ const GlobalProvider = (props) => {
     const store = {
         students: { value: students, set: setStudents },
         loading: { value: loading, set: setLoading },
-        prefixes: { value: prefixes, set: setPrefixes }
+        prefixes: { value: prefixes, set: setPrefixes },
+        tweets: { value: tweets, set: setTweets },
     }
     return (
         <GlobalContext.Provider value={store} >

@@ -26,13 +26,15 @@ header
         padding: 5px
         margin: 5px 2px
         border-radius: 3px
-        display: block  
+        display: flex
         text-decoration: none
         color: #333
         font-family: sans-serif
+        align-items: center
         img
             width: 24px
             height: 24px
+            margin: 0
     
     h1
         font-size: 2em
@@ -50,6 +52,10 @@ header
     .loading img
         height: 100px
 
+    &.high
+        height: 100px
+        #logo
+            height: 100px !important
     
 .fusen
     width: 300px

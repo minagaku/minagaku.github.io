@@ -6,10 +6,11 @@ import Layout from "../components/layout"
 import SEO from "../components/seo"
 import { rhythm } from "../utils/typography"
 import GlobalContext from "../contexts/GlobalContext";
-import StudentIndex from "../components/students";
+import StudentsIndex from "../components/students";
 import { Router } from "@reach/router";
 import "./global.sass"
 import StudentPage from "./students/student";
+import IndexPage from "./indexPage";
 
 const App = ({ data, location }) =>
 {
@@ -25,10 +26,11 @@ const App = ({ data, location }) =>
             })
     }, []);
 
-    return <Layout>
+    return <Layout location={location}>
         <Router>
             <StudentPage path={`${prefixes.value.students}/:name`} />
-            <StudentIndex path={`${prefixes.value.students}/`} />
+            <StudentsIndex path={`${prefixes.value.students}/`} />
+            <IndexPage path="/" />
         </Router>
     </Layout>
 }

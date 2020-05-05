@@ -5,9 +5,9 @@ import logo from "../images/logo.svg"
 import GlobalContext from "../contexts/GlobalContext"
 import Loading from "./loading";
 
-const Header = ({ siteTitle }) => {
+const Header = ({ location, siteTitle }) => {
   const { loading, prefixes } = useContext(GlobalContext);
-  return <header>
+  return <header className={location.pathname === "/" ? "high" : ""} >
     <Link className="link" to={`/${prefixes.value.students}`}>
       学
     </Link>
