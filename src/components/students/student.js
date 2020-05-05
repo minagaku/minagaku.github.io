@@ -31,7 +31,7 @@ const StudentPage = ({ name }) => {
             <article class="student-info">
                 <div class="student-info2">
                     <h2 style={st.fullname.length >= 15 ? { marginTop: "1em" } : undefined}>
-                        <Link to={`${prefixes.value.students}/${st.fullname}`}>{st.fullname}</Link>
+                        <Link to={`/${prefixes.value.students}/${st.fullname}`}>{st.fullname}</Link>
                         <span class="age">{st.age}歳 {st.sex}</span>
                     </h2>
                     <div class="fusen-wrapper"><Fusen student={st} /></div>

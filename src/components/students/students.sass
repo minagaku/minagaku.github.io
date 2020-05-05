@@ -11,9 +11,9 @@
         padding-bottom: 30px
         margin-bottom: -40px
         .student-box
-            background: hsla(0,0%,100%,.4);
-            box-shadow: 0 0 10px 10px hsla(0,0%,100%,.4);
-            padding: 1em;
+            background: hsla(0,0%,100%,.4)
+            box-shadow: 0 0 10px 10px hsla(0,0%,100%,.4)
+            padding: 1em
             margin-bottom: -1em
         h2
             margin-top: 0
@@ -27,8 +27,8 @@
                 font-size: 0.5em
                 margin-left: 0.5em
             .age
-                margin-left: 1em;
-                font-size: 0.5em;
+                margin-left: 1em
+                font-size: 0.5em
     .fusen-wrapper
         transform: rotate(-3deg)
         position: absolute
@@ -46,25 +46,25 @@
             top: 1em
             right: calc( 1em + 320px )
             height: 100px
-            box-shadow: -1px -1px 3px #6666;
+            box-shadow: -1px -1px 3px #6666
 
 .student-detail
     display: flex
     .student-info
         flex-grow: 1
     .student-info2
-        background: #FFFFFF66;
-        box-shadow: 0 0 10px 10px #FFFFFF66;
-        padding: 1em;
+        background: #FFFFFF66
+        box-shadow: 0 0 10px 10px #FFFFFF66
+        padding: 1em
         position: relative
         .chara-card
-            grid-row: 1/2;
-            grid-area: a1;
-            margin: 1em;
-            max-width: 300px;
+            grid-row: 1/2
+            grid-area: a1
+            margin: 1em
+            max-width: 300px
             img
-                box-shadow: 3px 3px 5px #00000066;
-                margin: 0;
+                box-shadow: 3px 3px 5px #00000066
+                margin: 0
                 background: white
 
         .mini-grid
@@ -86,16 +86,16 @@
         h3
             margin: 1em 0 0.5em
         .box
-            max-height: 12em;
-            border: 1px;
-            white-space: pre-line;
-            overflow-y: auto;
-            background: hsla(0,0%,100%,.4);
-            box-shadow: 0 0 10px 5px hsla(0,0%,100%,.4);
+            max-height: 12em
+            border: 1px
+            white-space: pre-line
+            overflow-y: auto
+            background: hsla(0,0%,100%,.4)
+            box-shadow: 0 0 10px 5px hsla(0,0%,100%,.4)
             padding: .3em
     
 .side-fusens
-    margin-right: -10px;
+    margin-right: -10px
     button
         border-radius: 5px
         border: 1px solid #CCC
@@ -103,11 +103,11 @@
         margin: 2px
 
 .side-fusen
-    background:  url(../../images/cream.jpg);
-    display:  block;
-    margin: 0.2em;
-    border-left: 10px #933 solid;
-    box-shadow: 1px 1px 3px #0009;
+    background:  url(../../images/cream.jpg)
+    display:  block
+    margin: 0.2em
+    border-left: 10px #933 solid
+    box-shadow: 1px 1px 3px #0009
     display: flex
     font-family: serif
     .fusen-chara-card
@@ -120,16 +120,64 @@
             margin: 0
         
     a
-        display:  block;
-        text-decoration:  none;
-        color: #300;
-        white-space:  nowrap;
-        width: 150px;
-        padding:  0.5rem;
-        font-size: 1rem;
+        display:  block
+        text-decoration:  none
+        color: #300
+        white-space:  nowrap
+        width: 150px
+        padding:  0.5rem
+        font-size: 1rem
 
     &:hover 
-        margin-left: -20px;
-        transition:  0.1s margin-left;
+        margin-left: -20px
+        transition:  0.1s margin-left
 .side-fusen.current
-    border-left: 10px #336 solid;
+    border-left: 10px #336 solid
+
+@media only screen and (max-width: 720px)
+    main
+        padding-left: 5px !important
+    .student-detail
+        .side-fusens
+            display: none
+        .fusen-wrapper
+            top: 0 !important
+
+        .student-info
+            padding-right: 0 !important
+            padding-left: 1.2rem !important
+            .student-info2
+                padding-top: 4rem
+                padding-left: 0
+                .age 
+                    display: block
+                .mini-table
+                    display: block
+                    table
+                        width: 100%
+                        flex-direction: column
+                .mini-grid
+                    display: flex
+                    flex-direction: column
+                    th, th
+                        width: 8em
+
+    .student-list
+        .fusen, img.chara-card
+            display: none
+
+        article
+            padding-right: 0
+            .student-box
+                padding: 0 0 1rem 0
+                margin-bottom: -2.5rem
+
+            h2
+                font-size: 1rem
+                position: relative
+                top: -1rem
+                a
+                    display: block
+                .age
+                    font-size: 0.8rem
+        
