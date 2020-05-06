@@ -10,7 +10,7 @@ import SideFusenList from './sideFusenList';
 function renderFigcaption(cap) {
   if (!cap || cap === '') return '';
   const m = cap.match(/https?:\/\/[\w!?+-_~=;.,*&@#$%()'[]]+/);
-  const c = cap.match(/https?:\/\/[\w!?+-_~=;.,*&@#$%()'[]]+/, '');
+  const c = cap.replace(/https?:\/\/[\w!?+-_~=;.,*&@#$%()'[]]+/, '');
 
   if (m) {
     return (

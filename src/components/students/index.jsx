@@ -26,7 +26,7 @@ const StudentIndex = () => {
                       </span>
                     </Link>
                   </h2>
-                  <img className="chara-card" alt="立ち絵" src={st.chara_card} />
+                  {st.chara_card && <img className="chara-card" alt="立ち絵" src={st.chara_card} />  }
                   <div className="fusen-wrapper"><Fusen student={st} /></div>
                 </div>
               </article>

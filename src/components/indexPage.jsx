@@ -58,14 +58,17 @@ const IndexPage = () => {
         <div className="kuguri-area">
           <div className="kuguri-img" />
           <div className="text">
-            <Link to={`/${prefixes.value.student}/クグリ・ストラトス`} className="name">[クグリ・ストラトス]</Link>
-            やぁ、喫茶マッターホルンへようこそ！
-            <br />
-            今日はいい食材が入っているぞ。
+            <Link to={`/${prefixes.value.students}/クグリ・ストラトス`} className="name">[クグリ・ストラトス]</Link>
+            やぁ、喫茶マッターホルンへようこそ！今日はいい食材が入っているぞ。
             <br />
             <br />
             <a href="https://w.atwiki.jp/ragadoon/pages/1293.html">第三週クエスト</a>
             はもう投稿したかな？金曜日までだからお忘れなく！
+          </div>
+        </div>
+        <div>
+          <div className="paper-back student-list-link">
+            <Link to={`/${prefixes.value.students}`} >学生一覧</Link>
           </div>
         </div>
         <div className="minagaku-tl">
@@ -74,19 +77,19 @@ const IndexPage = () => {
             Timeline 毎時更新
           </div>
           {
-          tweets.value.map((t) => (
-            <div className="tweet" key={t.TweetId}>
-              <div className="tweet-header">
-                {findStudent(prefixes.value.students, students.value, t)}
+            tweets.value.map((t) => (
+              <div className="tweet" key={t.TweetId}>
+                <div className="tweet-header">
+                  {findStudent(prefixes.value.students, students.value, t)}
+                </div>
+                <div className="tweet-body">
+                  <div dangerouslySetInnerHTML={{ __html: t.TweetText.replace('\n', '<br>').replace(/(https:\/\/t\.co\/\w+)/, "<a href='$1'>$1</a>") }} />
+                  {t.MediaUrls.map((x) => <a href={x}><img alt="media" src={x} /></a>)}
+                </div>
+                <a className="time" href={`https://twitter.com/${t.TweetedBy}/status/${t.TweetId}`}><time>{t.CreatedAtIso}</time></a>
               </div>
-              <div className="tweet-body">
-                <div dangerouslySetInnerHTML={{ __html: t.TweetText.replace('\n', '<br>').replace(/(https:\/\/t\.co\/\w+)/, "<a href='$1'>$1</a>") }} />
-                {t.MediaUrls.map((x) => <a href={x}><img alt="media" src={x} /></a>)}
-              </div>
-              <a className="time" href={`https://twitter.com/${t.TweetedBy}/status/${t.TweetId}`}><time>{t.CreatedAtIso}</time></a>
-            </div>
-          ))
-        }
+            ))
+          }
         </div>
       </div>
 

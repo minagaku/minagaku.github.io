@@ -42,6 +42,7 @@
 
 
         .tweet-body
+            font-family: BIZ UDGothic, sans-serif
             white-space: pre-line
             background: #FFFFFFCC
             padding: 0.5rem
@@ -97,6 +98,7 @@
 
         .text
             flex-grow: 1
+            font-family: sans-serif
             .name
                 font-weight: bold
                 color: #CC6666
@@ -156,3 +158,67 @@
   100%
     transform: scale(1, 1) translate(0%, 0%)
     background-image: url("../images/kuguriSD1.png")
+
+.paper-back
+    background-image: url("../images/old-paper-back.jpg")
+    padding: 1em
+    margin: 1rem
+    position: relative
+    overflow: hidden
+    z-index: 0
+    &::before
+        content: " "
+        background: #FFFFFF66
+        box-shadow: 0 0 10px 10px hsla(0,0%,100%,.4)
+        width: calc( 100% - 3rem )
+        height: calc( 100% - 3rem )
+        position: absolute
+        top: 0rem
+        left: 0rem
+        margin: 1.5rem
+        z-index: -1
+
+.student-list-link
+    box-shadow: 1px 1px 5px #00000099
+    border-radius: 2px
+    a
+        font-size: 2rem
+        color: black
+        display: block
+        text-decoration: none
+        padding: 0.5rem 3rem
+        font-family: serif;
+
+
+    &::after
+        content: url("../images/mj2.svg")
+        position: absolute
+        top: -30px
+        left: -30px
+        height: 100px
+        width: 100px
+
+@media only screen and (max-width: 720px)
+    .home
+        display: flex
+        flex-direction: column
+        margin-left: -10px
+
+        .minagaku-tl
+            width: 100%
+            margin: 0
+        .kuguri-area
+            .kuguri-img
+                width: 100px !important
+                height: 100px !important
+                flex-shrink: 0
+            .text
+                margin: 0 1rem
+                &::before
+                    top: 1rem
+
+
+
+
+
+
