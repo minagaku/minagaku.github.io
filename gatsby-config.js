@@ -1,3 +1,4 @@
+const darkTheme = require('@ant-design/dark-theme').default;
 module.exports = {
   siteMetadata: {
     title: '喫茶マンハッタン@みながく',
@@ -15,7 +16,28 @@ module.exports = {
     },
   },
   plugins: [
-    'gatsby-plugin-sass',
+    {
+      resolve: 'gatsby-plugin-sass',
+      options: {
+        postCssPlugins: [
+          require("tailwindcss"),
+          require("./tailwind.config.js"), // Optional: Load custom Tailwind CSS configuration
+        ],
+      }
+    },
+    {
+      resolve: 'gatsby-plugin-antd',
+      options: {
+        style: true
+      }
+    },
+    {
+      resolve: "gatsby-plugin-less",
+      options: {
+        javascriptEnabled: true,
+        modifyVars: darkTheme
+      }
+    },
     {
       resolve: 'gatsby-source-filesystem',
       options: {

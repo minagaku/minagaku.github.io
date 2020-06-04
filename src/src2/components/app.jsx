@@ -6,6 +6,7 @@ import GlobalContext from '../contexts/GlobalContext';
 import StudentsIndex from './students';
 import './global.sass';
 import StudentPage from './students/student';
+import DiscordIndex from './log/index';
 import IndexPage from './indexPage';
 
 const App = ({ data, location }) => {
@@ -29,6 +30,7 @@ const App = ({ data, location }) => {
       <Router>
         <StudentPage path={`${prefixes.value.students}/:name`} />
         <StudentsIndex path={`${prefixes.value.students}/`} />
+        <DiscordIndex path={`log/:value`} />
         <IndexPage path="/" />
       </Router>
     </Layout>
