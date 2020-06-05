@@ -2,7 +2,10 @@ import React, { useState } from 'react';
 
 const defaultState = {
   users: [],
-  discord: {},
+  discord: {
+    messages: [],
+    id2pc: {}
+  },
   loading: false,
   prefixes: {
     students: 'students',
@@ -34,7 +37,7 @@ const GlobalProvider = (props) => {
   const [loading, setLoading] = useState(false);
   const [prefixes, setPrefixes] = useState(defaultState.prefixes);
   const [tweets, setTweets] = useState([]);
-  const [discord, setDiscord2] = useState({});
+  const [discord, setDiscord2] = useState(defaultState.discord);
   const { children } = props;
   const setStudents = (newUsers) => {
     if (typeof window !== 'undefined') window.localStorage.setItem('users', JSON.stringify(newUsers));
