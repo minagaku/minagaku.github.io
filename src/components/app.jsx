@@ -29,7 +29,8 @@ const App = ({ data, location }) => {
       <Router>
         <StudentPage path={`${prefixes.value.students}/:name`} />
         <StudentsIndex path={`${prefixes.value.students}/`} />
-        <DiscordIndex path={`/log/:value`} />
+        <DiscordIndex path={`/discord/:category/:channel`} />
+        <DiscordIndex path={`/discord/*`} />
         <IndexPage path="/" />
       </Router>
     </Layout>
