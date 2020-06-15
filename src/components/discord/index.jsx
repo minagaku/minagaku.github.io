@@ -80,6 +80,12 @@ const DiscordIndex = () => {
 
     const [modalVisible, setModalVisible] = useState(false);
     const [selected, setSelected] = useState(null);
+    const [activeTabKey,setActiveTabKey] = useState("1");
+    function onMenuClick( value )
+    {
+        setSelected(value);
+        setActiveTabKey("3");
+    }
 
     const channelMap = new Map();
     discord.value.messages.forEach(i => {
@@ -92,7 +98,7 @@ const DiscordIndex = () => {
     const [selectedCat, selectedChannelId] = selected ? selected.key.split("/") : [null, null]
     const channelList = selected ? channelMap.get(selectedCat) : []
     const selectedChannel = selected ? channelList.find(x => x.channel.id === selectedChannelId) : null
-    console.log(selectedChannel, channelList);
+    console.log( Array.from(channelMap.entries()).map(([cat, chan]) => cat ));
 
     return (
         <>
@@ -116,15 +122,15 @@ const DiscordIndex = () => {
                     </div>
 
                     <Anchor>
-                        <Tabs defaultActiveKey="1" type="card" size="small" moreIcon={null}>
-                            <Tabs.TabPane tab="チャンネル" key="1">
-                                <Menu mode="inline" onSelect={(val) => { setSelected(val) }}>
+                        <Tabs activeKey={ activeTabKey } onChange={ value => setActiveTabKey(value)} type="card" size="small" moreIcon={null}>
+                            <Tabs.TabPane tab="Channels" key="1">
+                                <Menu mode="inline" onSelect={onMenuClick} openKeys={ Array.from(channelMap.entries()).map(([cat, chan]) => cat ) } inlineCollapsed={false}>
                                     {
                                         Array.from(channelMap.entries()).map(([cat, chan]) =>
                                             <SubMenu key={cat} title={cat}>
                                                 {
                                                     chan.map(x =>
-                                                        <Menu.Item key={x.channel.category + "/" + x.channel.id}>
+                                                        <Menu.Item icon={ <b style={{color:"#666"}}># </b> } key={x.channel.category + "/" + x.channel.id}>
                                                             {x.channel.name}
                                                         </Menu.Item>
                                                     )
@@ -134,10 +140,10 @@ const DiscordIndex = () => {
                                     }
                                 </Menu>
                             </Tabs.TabPane>
-                            <Tabs.TabPane tab="タイムライン" key="2">
-                                Content of Tab Pane 2
-                        </Tabs.TabPane>
-                            <Tabs.TabPane tab="トーク" key="3">
+                            <Tabs.TabPane tab="Timeline" key="2">
+                                Comming Soon.
+                            </Tabs.TabPane>
+                            <Tabs.TabPane tab="Talks" key="3">
                                 {selectedChannel?.name}
                                 {renderSubTimeLine(selectedChannel, channelList, discord.value.id2pc)}
                             </Tabs.TabPane>
@@ -156,7 +162,7 @@ const DiscordIndex = () => {
 
     function iconTagRender(value) {
         const s = students.value[value];
-        if (!s) return <b style={{ color: "red" }}>Invalid!{value}</b>
+        if (!s) return <b style={{ color: "red" }}>!{value}</b>
         return <Popover
             content={<><img width="100" src={s.chara_card} /><br />PL: {s.player}</>}
             title={<Link to={`/${prefixes.value.students}/${s.fullname}`}>{s.fullname}</Link>}
@@ -168,7 +174,7 @@ const DiscordIndex = () => {
     }
 
     function contentTagRender(s) {
-        if (!s) return <b style={{ color: "red" }}>Invalid!{props.value}</b>
+        if (!s) return <b style={{ color: "red" }}>!</b>
         return <Popover
             content={<><img width="100" src={s.chara_card} /><br />PL: {s.player}</>}
             title={<Link to={`/${prefixes.value.students}/${s.fullname}`}>{s.fullname}</Link>}
@@ -223,7 +229,7 @@ const DiscordIndex = () => {
                                     return <>{normal}{at ? <span className="at-talk">@{at}</span> : ""}<br /></>
                                 })
                             }
-                                {z.attachments.map(a => <a href={a.url}><img className="attachment" src={a.url} /></a>}
+                                {z.attachments.map(a => <a href={a.url}><img className="attachment" src={a.url} /></a>)}
                                 {z.reactions.length > 0 ?
                                     <div className="reactions">
                                         {
@@ -232,7 +238,6 @@ const DiscordIndex = () => {
                                     </div>
                                     : null
                                 }
-
                             </div>)
                         }
                     </div>
@@ -286,11 +291,9 @@ const DiscordIndex = () => {
                 <Link to={`/discord/${channel.channel.category}/${channel.channel.name}#${x.messages[0][0].timestamp2.format("MMDDhhmm")}`}>
                     <>
                         <Anchor.Link href={`/discord/${channel.channel.category}/${channel.channel.name}#${x.messages[0][0].timestamp2.format("MMDDhhmm")}`} />
-                        <time>
-                            {x.messages[0][0].timestamp2.format("M/D hh:mm")}～{x.messages.last().last().timestamp2.format("hh:mm")}
-                        </time>
-                            ({x.messages.length})
-                            </>
+                        <time> {x.messages[0][0].timestamp2.format("M/D hh:mm")}～{x.messages.last().last().timestamp2.format("hh:mm")} </time>
+                        ({x.messages.length})
+                    </>
                 </Link>
                 <div>
                     {x.students.map(st => iconTagRender(students.value.findIndex(x => x.fullname === st)))}
@@ -298,20 +301,6 @@ const DiscordIndex = () => {
             </>
         </List.Item>
         } />
-
-        return <Menu mode="inline">{
-            final.map(x =>
-                <Menu.Item key={x.messages[0].timestamp2.format("MM-DDhh:mm:ss")}>
-                    <div>
-                        <time>
-                            {x.messages[0].timestamp2.format("M月D日hh:mm")} ～ {x.messages[x.messages.length - 1].timestamp2.format("M月D日 hh:mm")}
-                        </time>
-                    ({x.messages.length})
-                    {x.students.map(st => tagRender({ value: students.value.findIndex(x => x.fullname === st) }))}
-                    </div>
-                </Menu.Item>
-            )
-        } </Menu>
     }
 };
 
