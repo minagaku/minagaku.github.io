@@ -2,6 +2,20 @@
 @tailwind components
 @tailwind utilities
 .discord
+    .at-student
+        opacity: 0.5
+        &::after
+            content: "@"
+            position: absolute
+            top: 0
+            left: 3px
+            z-index: 999
+            color: #6C6
+            text-shadow: 1px 1px #000,-1px -1px #000
+            font-size: 1.5rem
+            opacity: 0.7
+
+
     // background: rgb(54, 57, 63)
     background: rgb(20,20,20)
     position: absolute
@@ -38,7 +52,7 @@
         grid-template-columns: 64px auto
         grid-template-rows: 1.2rem auto
         display: grid
-        margin-top: 1rem
+        margin-top: 0.5rem
         .attachment
             max-height: 300px
         .reactions
@@ -88,10 +102,13 @@
         padding: 6px 5px !important
 
 
-    
     .ant-anchor-ink-ball
         height: 2rem !important
         width: 3px !important
+        margin-top: 58px;
+
+    .ant-tabs-nav-operations
+        display: none !important
     li.ant-list-item
         padding: 0 3px 0.3rem 3px
         display: flex

@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import "./discord.sass"
 import "./global.less"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faArrowCircleUp, faLongArrowAltUp } from '@fortawesome/free-solid-svg-icons';
 import { List, Input, Modal, Button, Select, Tag, Layout, Space, Checkbox, Radio, Menu, Popover, Anchor, Tabs } from 'antd';
 import SubMenu from 'antd/lib/menu/SubMenu';
 import { Link, useParams, useLocation, navigate } from '@reach/router';
@@ -81,6 +81,9 @@ const DiscordIndex = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [selected, setSelected] = useState(null);
     const [activeTabKey,setActiveTabKey] = useState("1");
+    const [studentFilter,setStudentFilter] = useState([]);
+    const [filterWord,setFilterWord] = useState("");
+    const [filterAtTalk,setFilterAtTalk] = useState(true);
     function onMenuClick( value )
     {
         setSelected(value);
@@ -98,33 +101,28 @@ const DiscordIndex = () => {
     const [selectedCat, selectedChannelId] = selected ? selected.key.split("/") : [null, null]
     const channelList = selected ? channelMap.get(selectedCat) : []
     const selectedChannel = selected ? channelList.find(x => x.channel.id === selectedChannelId) : null
-    console.log( Array.from(channelMap.entries()).map(([cat, chan]) => cat ));
 
     return (
         <>
             <Layout className="discord">
-                <Sider style={{ minHeight: '100vh' }} width={250}>
+                <Sider zeroWidthTriggerStyle={{position:"fixed",left:0,top:"100px"}} defaultCollapsed={true} collapsedWidth="0" breakpoint="lg" style={{ minHeight: '100vh' }} width={250}>
                     <Space style={{ margin: "5px" }}>
-                        みながくDiscord
+                        みながくDC(人柱版)
                         <Button onClick={() => setModalVisible(true)}>{pass.hash ? <FontAwesomeIcon icon={faCheck} /> : "Pass"}</Button>
                         <Modal title="パスワード" visible={modalVisible} cancelText={null} footer={<Button key="submit" type="primary" onClick={() => setModalVisible(false)}> OK </Button>} onCancel={() => setModalVisible(false)}>
                             <Input placeholder="パスワード" value={pass.raw} onChange={e => setPass({ raw: e.target.value, hash: null })} addonAfter={pass.hash ? <FontAwesomeIcon icon={faCheck} color="green" /> : ""} />
                         </Modal>
                     </Space>
                     <div className="m-2">
-                        <Input placeholder="単語検索" />
-                        <Select className="mt-2" placeholder="学生検索" filterOption={filter} mode="multiple" style={{ width: "100%" }} tagRender={tagRender} options={opts}> </Select>
-                        <Checkbox>@発言だけも検索に含める</Checkbox><br />
-                        {/* <Radio.Group defaultValue="channel" buttonStyle="solid">
-                            <Radio.Button value="channel">チャンネル</Radio.Button>
-                            <Radio.Button value="timeline">時間</Radio.Button>
-                        </Radio.Group> */}
+                        <Input placeholder="単語検索" value={filterWord} onChange={s => setFilterWord(s.target.value)} />
+                        <Select className="mt-2" placeholder="学生検索" filterOption={filter} mode="multiple" style={{ width: "100%" }} onChange={z => setStudentFilter(z)} tagRender={tagRender} options={opts}> </Select>
+                        <Checkbox checked={filterAtTalk}  onChange={s=>setFilterAtTalk(s.target.checked)}>@発言だけも検索に含める</Checkbox><br />
                     </div>
 
                     <Anchor>
-                        <Tabs activeKey={ activeTabKey } onChange={ value => setActiveTabKey(value)} type="card" size="small" moreIcon={null}>
+                        <Tabs activeKey={ activeTabKey } onChange={ value => setActiveTabKey(value)} moreIcon={null} type="card" size="small" tabBarExtraContent={ <Button onClick={ () => { window.scrollTo(0, 0) }} type="link" icon={<FontAwesomeIcon icon={faLongArrowAltUp} />} /> } >
                             <Tabs.TabPane tab="Channels" key="1">
-                                <Menu mode="inline" onSelect={onMenuClick} openKeys={ Array.from(channelMap.entries()).map(([cat, chan]) => cat ) } inlineCollapsed={false}>
+                                <Menu  mode="inline" onSelect={onMenuClick} openKeys={ Array.from(channelMap.entries()).map(([cat, chan]) => cat ) } inlineCollapsed={false}>
                                     {
                                         Array.from(channelMap.entries()).map(([cat, chan]) =>
                                             <SubMenu key={cat} title={cat}>
@@ -160,14 +158,14 @@ const DiscordIndex = () => {
         </>
     );
 
-    function iconTagRender(value) {
+    function iconTagRender(value,noAt) {
         const s = students.value[value];
         if (!s) return <b style={{ color: "red" }}>!{value}</b>
         return <Popover
             content={<><img width="100" src={s.chara_card} /><br />PL: {s.player}</>}
             title={<Link to={`/${prefixes.value.students}/${s.fullname}`}>{s.fullname}</Link>}
             trigger="click">
-            <Button type={s.chara_card ? "text" : "dashed"} icon={<img src={s.chara_card} />}>
+            <Button className={ noAt ? "" : "at-student"} type={s.chara_card ? "text" : "dashed"} icon={<img src={s.chara_card} />}>
                 {s.chara_card ? null : s.firstname}
             </Button>
         </Popover>;
@@ -180,7 +178,7 @@ const DiscordIndex = () => {
             title={<Link to={`/${prefixes.value.students}/${s.fullname}`}>{s.fullname}</Link>}
             trigger="hover">
             <Tag className="discord-select-tag" icon={<img src={s.chara_card} />} >
-                <Link to={`/${prefixes.value.students}/${s.firstname}`}>{s.fullname}</Link>
+                {s.fullname}
             </Tag>
         </Popover>
     }
@@ -218,7 +216,7 @@ const DiscordIndex = () => {
             {x.messages.map(y => <>
                 <div className="talk-content-header">
                     <div className="img-container">
-                        <div className="chara-image" style={{ backgroundImage: `url(${studentByName(y[0].author.pcname).chara_card})` }}></div>
+                        <div className="chara-image" style={{ backgroundImage: `url(${studentByName(y[0].author.pcname)?.chara_card})` }}></div>
                     </div>
                     <h4>{y[0].author.pcname}　<small>{y[0].timestamp2.format("M/D hh:mm")}</small></h4>
                     <div>
@@ -251,6 +249,7 @@ const DiscordIndex = () => {
     function getThread(channel, id2pc) {
         let current = []
         let cMap = new Map();
+        let cMapNoAt = new Map();
         let final = [];
         channel.messages.forEach(m => {
             m.timestamp2 = moment(Date.parse(m.timestamp));
@@ -262,9 +261,10 @@ const DiscordIndex = () => {
             const lastTalk = current[current.length - 1]
             const last = lastTalk[lastTalk.length - 1]
             if (m.timestamp2.diff(last.timestamp2, "hours", true) > 2) {
-                final.push({ messages: current, students: Array.from(cMap.keys()).map(x => id2pc[x]) });
+                final.push({ messages: current, studentsNoAt: Array.from(cMapNoAt.keys()).map(x => id2pc[x]) ,students: Array.from(cMap.keys()).map(x => id2pc[x] ) });
                 current = [];
                 cMap = new Map();
+                cMapNoAt = new Map();
             }
             if (m.timestamp2.diff(last.timestamp2, "minutes", true) <= 5 && m.author.pcname === last.author.pcname) {
                 lastTalk.push(m);
@@ -272,19 +272,27 @@ const DiscordIndex = () => {
                 current.push([m]);
             }
             cMap.set(m.author.id);
+            if(!m.content.match(/^[@＠]/m))cMapNoAt.set(m.author.id);
         });
 
-        if (current.length !== 0) final.push({ messages: current, students: Array.from(cMap.keys()).map(x => id2pc[x]) });
+        if (current.length !== 0) final.push({ messages: current, studentsNoAt: Array.from(cMapNoAt.keys()).map(x => id2pc[x]) , students: Array.from(cMap.keys()).map(x => id2pc[x]) });
         return final
     }
 
     function renderSubTimeLine(channel, list, id2pc) {
-        if (!channel || !list) return "Select!"
-
-
+        if (!channel || !list) return "Channelsからチャネルを選択してください。"
         let current = []
         let cMap = new Map();
-        const final = getThread(channel, id2pc)
+        let final = getThread(channel, id2pc)
+        if(studentFilter.length !== 0)
+            if(filterAtTalk)
+                final = final.filter( talk  =>  studentFilter.every(st => talk.students.some( ts => students.value[st].fullname === ts )))
+            else
+                final = final.filter( talk  =>  studentFilter.every(st => talk.studentsNoAt.some( ts => students.value[st].fullname === ts )))
+        if(filterWord !== "")
+            final = final.filter( talk => talk.messages.some( t => t.some( t2 => t2.content.includes(filterWord) ) ));
+
+
 
         return <List className="thread-list" size="small" itemLayout="horizontal" dataSource={final} renderItem={x => <List.Item>
             <>
@@ -296,7 +304,7 @@ const DiscordIndex = () => {
                     </>
                 </Link>
                 <div>
-                    {x.students.map(st => iconTagRender(students.value.findIndex(x => x.fullname === st)))}
+                    {x.students.map(st => iconTagRender(students.value.findIndex(x => x.fullname === st),x.studentsNoAt.includes(st) ))}
                 </div>
             </>
         </List.Item>
