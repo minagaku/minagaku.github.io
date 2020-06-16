@@ -41,7 +41,6 @@ function findStudent(stp, list, t) {
     </>
   );
 }
-
 const IndexPage = () => {
   const { students, prefixes, tweets } = useContext(GlobalContext);
   useEffect(() => {
@@ -96,9 +95,7 @@ const IndexPage = () => {
           Icon: https://www.flaticon.com/free-icon/magic-wand_2919743?term=magic%20wand&page=1&position=2
         </div>
       </div>
-
     </>
   );
 };
-
 export default IndexPage;

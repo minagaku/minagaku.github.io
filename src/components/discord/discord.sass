@@ -1,0 +1,161 @@
+/* @tailwind base */
+@tailwind components
+@tailwind utilities
+.discord
+    .at-student
+        opacity: 0.5
+        &::after
+            content: "@"
+            position: absolute
+            top: 0
+            left: 3px
+            z-index: 999
+            color: #6C6
+            text-shadow: 1px 1px #000,-1px -1px #000
+            font-size: 1.5rem
+            opacity: 0.7
+
+
+    // background: rgb(54, 57, 63)
+    background: rgb(20,20,20)
+    position: absolute
+    top: 0
+    left: 0
+    margin-top: 50px !important
+    width: 100%
+    min-height: 100vh
+    .ant-layout-content
+        background: rgb(54, 57, 63)
+        color: rgb(220, 221, 222)
+
+    .id-hash
+        margin-top: -50px;
+        padding-top: 50px;
+    .talk-header
+        background: #BBB
+        padding: 0 0 0.5rem 1rem
+        color: #333
+        margin-top: 2rem
+        .ant-tag
+            padding-left: 0
+            background: rgb(54, 57, 63)
+            border-radius: 3px
+            a
+                color: rgb(220, 221, 222)
+                
+        a
+            color: #333
+        time
+            font-size: 1.5rem
+    
+    .talk-content-header
+        grid-template-columns: 64px auto
+        grid-template-rows: 1.2rem auto
+        display: grid
+        margin-top: 0.5rem
+        .attachment
+            max-height: 300px
+        .reactions
+            display: flex
+            flex-direction: row
+            .reaction
+                img
+                    height: 1rem
+                    width: 1rem
+                    margin: 0.3rem
+                padding: 0 0.4rem
+                display: flex
+                align-items: center
+                margin-left: 5px
+                border-radius: 3px
+                background: #444
+                color: #999
+
+        .img-container
+            grid-row: 1/3
+            grid-column: 1/2
+            border-radius: 24px
+            background: white
+            height: 48px
+            width: 48px
+            .chara-image
+                height: 48px
+                width: 48px
+                background-size: 48px
+                border-radius: 24px
+            
+        h4
+            margin-bottom: 0
+            font-weight: bold
+            color: white
+            small
+                font-size: 0.8em
+                font-weight: normal
+                color: #999
+
+        .at-talk
+            color: #AAFFAA
+
+    .ant-affix
+        top: 50px !important
+    .ant-tabs-tab
+        padding: 6px 5px !important
+
+
+    .ant-anchor-ink-ball
+        height: 2rem !important
+        width: 3px !important
+        margin-top: 58px;
+
+    .ant-tabs-nav-operations
+        display: none !important
+    li.ant-list-item
+        padding: 0 3px 0.3rem 3px
+        display: flex
+        flex-wrap: wrap
+        align-items: flex-start
+        margin: 0
+
+        .ant-anchor-link
+            width: 0
+            padding: 0
+            display: inilne-block
+        &>div
+            display: flex
+            flex-wrap: wrap
+            &>span
+                overflow: hidden;
+        a
+            padding-bottom: 0.3rem
+            color: #CCC
+        button
+            padding: 0
+            overflow: hidden
+            span
+                width: 32px
+                font-size: 9px
+                word-break: break-all
+                white-space: normal
+                
+
+div.discord-option-img
+    width: 36px
+    display: inline-block
+    img 
+        height: 32px !important
+        margin: 0
+        vertical-align: top
+div.discord-option-label
+    display: inline-flex
+    flex-direction: column
+    line-height: 1em
+    small
+        color: #666
+    
+    
+
+.discord-select-tag
+    img
+        height: 24px
+        margin: 0
+        margin-right: 6px
