@@ -20,7 +20,7 @@ const SideFusenList = ({ students, current, prefix }) => {
         <FontAwesomeIcon icon={faHome} />
       </button>
       {
-            students.sort((x, y) => (sort === 'family' ? x.lastname : x.fullname).localeCompare(y.fullname, 'ja')).map((st) => (
+            students.sort((x, y) => (sort === 'family' ? x.lastname + x.firstname : x.fullname).localeCompare((sort === 'family' ? y.lastname + y.firstname : y.fullname), 'ja')).map((st) => (
               <div className={`side-fusen ${st.fullname === current ? 'current' : ''}`}>
                 <div className="fusen-chara-card">
                   {st.chara_card ? <img alt="立ち絵" loading="lazy" src={st.chara_card} /> : ''}

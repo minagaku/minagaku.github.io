@@ -11,7 +11,7 @@ import IndexPage from './indexPage';
 const App = ({ data, location }) => {
   const { loading, students, prefixes } = useContext(GlobalContext);
   if (prefixes.value.students !== data.site.siteMetadata.prefixes.students) {
-    prefixes.set(data.prefixes);
+    prefixes.set({students:data.site.siteMetadata.prefixes.students});
   }
   useEffect(() => {
     loading.set(true);
@@ -23,6 +23,7 @@ const App = ({ data, location }) => {
       });
   }, []);
 
+  if( location.host !== "localhost:8000" && location.host!=="minagaku.github.io" && location.pathname==="/") return <></>
   return (
     <Layout location={location}>
       <Router>

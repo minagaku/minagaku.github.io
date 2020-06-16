@@ -36,7 +36,7 @@ function findStudent(stp, list, t) {
         {student.fullname}
       </Link>
       <Link to={`/${stp}/${student.fullname}`} className="a4">
-        <img src={student.chara_card} loading="lazy" className="chara-card" alt="立ち絵" />
+        <img src={student.chara_card} loading="lazy" className="chara-card" alt="" />
       </Link>
     </>
   );
@@ -62,8 +62,8 @@ const IndexPage = () => {
             やぁ、喫茶マッターホルンへようこそ！今日はいい食材が入っているぞ。
             <br />
             <br />
-            <a href="https://w.atwiki.jp/ragadoon/pages/1293.html">第三週クエスト</a>
-            はもう投稿したかな？金曜日までだからお忘れなく！
+            <a href="https://w.atwiki.jp/ragadoon/pages/1276.html">今週の活動方針</a>はもう投稿したかな？
+            余裕をもって回答しよう（自戒）！
           </div>
         </div>
         <div>
@@ -90,6 +90,10 @@ const IndexPage = () => {
               </div>
             ))
           }
+        </div>
+        <div>
+          <b>License</b>
+          Icon: https://www.flaticon.com/free-icon/magic-wand_2919743?term=magic%20wand&page=1&position=2
         </div>
       </div>
 
