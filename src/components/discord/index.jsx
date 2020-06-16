@@ -36,28 +36,29 @@ async function generateHash(str) {
 
 const DiscordIndex = () => {
     const { discord, students, prefixes } = useContext(GlobalContext);
-    useEffect(() => {
-        // fetch('./merged.json')
-        //     .then((r) => r.json())
-        //     .then((rd) => {
-        //         discord.set(rd);
-        //     });
-        discord.set({ messages: require("./merged.json"), id2pc: require("./id2pc.json") })
-    }, []);
     const [pass, setPass] = useState({
         raw: discord.value.password,
-        hash: null
+        hash: false
     });
     useEffect(() => {
         async function genHash() {
             const hash1 = await generateHash(pass.raw + "minagaku-hash-1");
             if (hash1 === "ca701af4918adfba444487ab735c270136cad08d39ff79b26f09de16de0b0c9c") {
-                const hash = await generateHash(pass.raw + "minagaku-hash-3");
-                setPass({ ...pass, hash: hash })
+                const hash = await generateHash(pass.raw + "minagaku-hash-2");
+                discord.set({ ...discord.value, hash: hash, password: pass.raw })
+                setPass({...pass, hash: true})
             }
         }
         genHash()
     }, [pass.raw])
+    useEffect(() => {
+        if(!discord.value.hash)return;
+        fetch(`https://minagaku.z31.web.core.windows.net/${discord.value.hash}.json`)
+            .then((r) => r.json())
+            .then((rd) => {
+                discord.set({ ...discord.value, messages: rd.messages, id2pc: rd.id2pc });
+            });
+    }, discord.value.hash);
     function tagRender(props) {
         const s = students.value[props.value];
         if (!s) return <b style={{ color: "red" }}>Invalid!{props.value}</b>
@@ -91,7 +92,7 @@ const DiscordIndex = () => {
     }
 
     const channelMap = new Map();
-    discord.value.messages.forEach(i => {
+    discord.value.messages?.forEach(i => {
         const c = channelMap.get(i.channel.category);
         if (c) c.push(i); else channelMap.set(i.channel.category, [i])
     });
@@ -101,6 +102,7 @@ const DiscordIndex = () => {
     const [selectedCat, selectedChannelId] = selected ? selected.key.split("/") : [null, null]
     const channelList = selected ? channelMap.get(selectedCat) : []
     const selectedChannel = selected ? channelList.find(x => x.channel.id === selectedChannelId) : null
+    const [menuOpend,setMenuOpend] = useState(["ロールプレイチャンネル"])
 
     return (
         <>
@@ -122,9 +124,9 @@ const DiscordIndex = () => {
                     <Anchor>
                         <Tabs activeKey={ activeTabKey } onChange={ value => setActiveTabKey(value)} moreIcon={null} type="card" size="small" tabBarExtraContent={ <Button onClick={ () => { window.scrollTo(0, 0) }} type="link" icon={<FontAwesomeIcon icon={faLongArrowAltUp} />} /> } >
                             <Tabs.TabPane tab="Channels" key="1">
-                                <Menu  mode="inline" onSelect={onMenuClick} openKeys={ Array.from(channelMap.entries()).map(([cat, chan]) => cat ) } inlineCollapsed={false}>
+                                <Menu  mode="inline" onSelect={onMenuClick} onOpenChange={ setMenuOpend } openKeys={ menuOpend } inlineCollapsed={false}>
                                     {
-                                        Array.from(channelMap.entries()).map(([cat, chan]) =>
+                                        Array.from(channelMap.entries()).reverse().map(([cat, chan]) =>
                                             <SubMenu key={cat} title={cat}>
                                                 {
                                                     chan.map(x =>

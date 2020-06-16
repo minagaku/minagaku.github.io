@@ -27,7 +27,7 @@ function tryGetDiscord() {
   try {
     return JSON.parse(u);
   } catch (_) {
-    return 
+    return {}
   }
 }
 
@@ -37,14 +37,15 @@ const GlobalProvider = (props) => {
   const [loading, setLoading] = useState(false);
   const [prefixes, setPrefixes] = useState(defaultState.prefixes);
   const [tweets, setTweets] = useState([]);
-  const [discord, setDiscord2] = useState(defaultState.discord);
+  const [discord, setDiscord2] = useState(tryGetDiscord());
   const { children } = props;
   const setStudents = (newUsers) => {
     if (typeof window !== 'undefined') window.localStorage.setItem('users', JSON.stringify(newUsers));
     setStudentsState(newUsers);
   };
   const setDiscord = (newValue) => {
-    if (typeof window !== 'undefined') window.localStorage.setItem('discord', JSON.stringify(newValue));
+    const save = {...newValue, messages:[]}
+    if (typeof window !== 'undefined') window.localStorage.setItem('discord', JSON.stringify(save));
     setDiscord2(newValue);
   }
   const store = {
