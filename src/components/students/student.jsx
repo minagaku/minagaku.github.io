@@ -6,6 +6,7 @@ import './students.sass';
 import Fusen from './fusen';
 import Loading from '../loading';
 import SideFusenList from './sideFusenList';
+import Wand from '../../images/magic.svg'
 
 function renderFigcaption(cap) {
   if (!cap || cap === '') return '';
@@ -115,7 +116,7 @@ const StudentPage = ({ name }) => {
             <div className="box">{st.expression}</div>
             <h3>台詞例</h3>
             <div className="box">{st.expression_sample}</div>
-            <h3>能力値</h3>
+            <h3>能力値/魔法</h3>
             <div className="box">
               <table>
                 <tr>
@@ -135,6 +136,20 @@ const StudentPage = ({ name }) => {
                   <td>{st.status_emp}</td>
                 </tr>
               </table>
+              <div class="magic">
+                {
+                  st.magic1 && <>
+                    <img src={Wand} />
+                    {st.magic1}
+                  </>
+                }
+                {
+                  st.magic2 && <>
+                    <img src={Wand} />
+                    {st.magic2}
+                  </>
+                }
+              </div>
             </div>
           </div>
         </article>
