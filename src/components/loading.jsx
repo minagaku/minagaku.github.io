@@ -1,16 +1,15 @@
-import React from 'react';
+import React from "react"
 
-import mj from '../images/mahoujin.svg';
-
+import mj from "../images/mahoujin.svg"
 
 const Loading = ({ showText }) => (
   <>
     {/* <Mahoujin />  */}
     <div className="loading">
       <img src={mj} alt="" />
-      {showText ? <div>Loading...</div> : ''}
+      {showText ? <div>Loading...</div> : ""}
     </div>
   </>
-);
+)
 
-export default Loading;
+export default Loading

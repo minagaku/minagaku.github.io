@@ -5,13 +5,11 @@
  * See: https://www.gatsbyjs.org/docs/use-static-query/
  */
 
-import React from 'react';
-import Helmet from 'react-helmet';
-import { useStaticQuery, graphql } from 'gatsby';
+import React from "react"
+import Helmet from "react-helmet"
+import { useStaticQuery, graphql } from "gatsby"
 
-const SEO = ({
-  description, lang, meta, title,
-}) => {
+const SEO = ({ description, lang, meta, title }) => {
   const { site } = useStaticQuery(
     graphql`
       query {
@@ -25,10 +23,10 @@ const SEO = ({
           }
         }
       }
-    `,
-  );
+    `
+  )
 
-  const metaDescription = description || site.siteMetadata.description;
+  const metaDescription = description || site.siteMetadata.description
 
   return (
     <Helmet
@@ -39,47 +37,46 @@ const SEO = ({
       titleTemplate={`%s | ${site.siteMetadata.title}`}
       meta={[
         {
-          name: 'description',
+          name: "description",
           content: metaDescription,
         },
         {
-          property: 'og:title',
+          property: "og:title",
           content: title,
         },
         {
-          property: 'og:description',
+          property: "og:description",
           content: metaDescription,
         },
         {
-          property: 'og:type',
-          content: 'website',
+          property: "og:type",
+          content: "website",
         },
         {
-          name: 'twitter:card',
-          content: 'summary',
+          name: "twitter:card",
+          content: "summary",
         },
         {
-          name: 'twitter:creator',
+          name: "twitter:creator",
           content: site.siteMetadata.social.twitter,
         },
         {
-          name: 'twitter:title',
+          name: "twitter:title",
           content: title,
         },
         {
-          name: 'twitter:description',
+          name: "twitter:description",
           content: metaDescription,
         },
       ].concat(meta)}
     />
-  );
-};
+  )
+}
 
 SEO.defaultProps = {
-  lang: 'en',
+  lang: "en",
   meta: [],
-  description: '',
-};
+  description: "",
+}
 
-
-export default SEO;
+export default SEO

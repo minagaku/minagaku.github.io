@@ -1,31 +1,29 @@
-import React, { useContext } from 'react';
-import { Link } from '@reach/router';
-import GlobalContext from '../../contexts/GlobalContext';
-import SEO from '../seo';
-import './students.sass';
-import Fusen from './fusen';
-import Loading from '../loading';
-import SideFusenList from './sideFusenList';
-import Wand from '../../images/magic.svg'
+import React, { useContext } from "react"
+import { Link } from "@reach/router"
+import GlobalContext from "../../contexts/GlobalContext"
+import SEO from "../seo"
+import "./students.sass"
+import Fusen from "./fusen"
+import Loading from "../loading"
+import SideFusenList from "./sideFusenList"
+import Wand from "../../images/magic.svg"
 
 function renderFigcaption(cap) {
-  if (!cap || cap === '') return '';
-  const m = cap.match(/https?:\/\/[\w!?+-_~=;.,*&@#$%()'[]]+/);
-  const c = cap.replace(/https?:\/\/[\w!?+-_~=;.,*&@#$%()'[]]+/, '');
+  if (!cap || cap === "") return ""
+  const m = cap.match(/https?:\/\/[\w!?+-_~=;.,*&@#$%()'[]]+/)
+  const c = cap.replace(/https?:\/\/[\w!?+-_~=;.,*&@#$%()'[]]+/, "")
 
   if (m) {
     return (
       <>
-        <a href={m[0]}>出典</a>
-        {' '}
-        {c}
+        <a href={m[0]}>出典</a> {c}
       </>
-    );
+    )
   }
-  return `出典:${c}`;
+  return `出典:${c}`
 }
 const StudentPage = ({ name }) => {
-  const { students, prefixes } = useContext(GlobalContext);
+  const { students, prefixes } = useContext(GlobalContext)
   if (students.value.length === 0) {
     return (
       <article className="student-detail">
@@ -33,18 +31,16 @@ const StudentPage = ({ name }) => {
           <Loading />
         </div>
       </article>
-    );
+    )
   }
-  const st = students.value.find((x) => x.fullname === name);
+  const st = students.value.find(x => x.fullname === name)
   if (!st) {
     return (
       <div>
         学生
-        {name}
-        {' '}
-        が見つかりません
+        {name} が見つかりません
       </div>
-    );
+    )
   }
   return (
     <>
@@ -53,26 +49,24 @@ const StudentPage = ({ name }) => {
         <SideFusenList students={students.value} current={name} prefix={prefixes.value.students} />
         <article className="student-info">
           <div className="student-info2">
-            <h2 style={st.fullname.length >= 15 ? { marginTop: '1em' } : undefined}>
+            <h2 style={st.fullname.length >= 15 ? { marginTop: "1em" } : undefined}>
               <Link to={`/${prefixes.value.students}/${st.fullname}`}>{st.fullname}</Link>
               <span className="age">
-                {st.age}
-                歳
-                {' '}
-                {st.sex}
+                {st.age}歳 {st.sex}
               </span>
             </h2>
-            <div className="fusen-wrapper"><Fusen student={st} /></div>
-            <div className={st.chara_card ? 'mini-grid' : 'mini-table'}>
+            <div className="fusen-wrapper">
+              <Fusen student={st} />
+            </div>
+            <div className={st.chara_card ? "mini-grid" : "mini-table"}>
               {st.chara_card ? (
                 <figure className="chara-card">
                   <img alt="立ち絵" src={st.chara_card} />
-                  <figcaption>
-                    {renderFigcaption(st.chara_card_by)}
-                    {' '}
-                  </figcaption>
+                  <figcaption>{renderFigcaption(st.chara_card_by)} </figcaption>
                 </figure>
-              ) : ''}
+              ) : (
+                ""
+              )}
               <table className="a2">
                 <tr>
                   <th>出自</th>
@@ -137,25 +131,25 @@ const StudentPage = ({ name }) => {
                 </tr>
               </table>
               <div class="magic">
-                {
-                  st.magic1 && <>
+                {st.magic1 && (
+                  <>
                     <img src={Wand} />
                     {st.magic1}
                   </>
-                }
-                {
-                  st.magic2 && <>
+                )}
+                {st.magic2 && (
+                  <>
                     <img src={Wand} />
                     {st.magic2}
                   </>
-                }
+                )}
               </div>
             </div>
           </div>
         </article>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default StudentPage;
+export default StudentPage

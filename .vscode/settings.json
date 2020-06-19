@@ -1,3 +1,7 @@
 {
-    "remote.WSL.fileWatcher.polling": true
+  "remote.WSL.fileWatcher.polling": true,
+  "[javascriptreact]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
