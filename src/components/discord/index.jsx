@@ -8,6 +8,7 @@ import { faCheck, faArrowCircleUp, faLongArrowAltUp } from "@fortawesome/free-so
 import { List, Input, Modal, Button, Select, Tag, Layout, Space, Checkbox, Radio, Menu, Popover, Anchor, Tabs } from "antd"
 import SubMenu from "antd/lib/menu/SubMenu"
 import { Link, useParams, useLocation, navigate } from "@reach/router"
+import SEO from "../seo"
 const moment = require("moment")
 const { Sider, Content } = Layout
 
@@ -16,7 +17,6 @@ if (!Array.prototype.last) {
     return this[this.length - 1]
   }
 }
-
 
 async function generateHash(str) {
   // generate hash!
@@ -41,15 +41,17 @@ function renderChannelMenu(channels) {
     if (c) c.push(i)
     else channelMap.set(i.meta.category, [i])
   }
-  const res = Array.from(channelMap.entries()).reverse().map(([cat, chan]) => (
-    <SubMenu key={cat} title={cat}>
-      {chan.map(x => (
-        <Menu.Item icon={<b style={{ color: "#666" }}># </b>} key={x.index}>
-          {x.meta.name}
-        </Menu.Item>
-      ))}
-    </SubMenu>
-  ))
+  const res = Array.from(channelMap.entries())
+    .reverse()
+    .map(([cat, chan]) => (
+      <SubMenu key={cat} title={cat}>
+        {chan.map(x => (
+          <Menu.Item icon={<b style={{ color: "#666" }}># </b>} key={x.index}>
+            {x.meta.name}
+          </Menu.Item>
+        ))}
+      </SubMenu>
+    ))
   return res
 }
 const goTopButton = <Button onClick={() => window.scrollTo(0, 0)} type="link" icon={<FontAwesomeIcon icon={faLongArrowAltUp} />} />
@@ -59,7 +61,7 @@ const DiscordIndex = () => {
   function getStudentByName(name) {
     return students.value.find(x => x.fullname === name)
   }
-  function renderTag(student, isFullname, iconic, at,onClose) {
+  function renderTag(student, isFullname, iconic, at, onClose) {
     if (!student) return <b key="?">?</b>
     return (
       <Popover
@@ -99,16 +101,23 @@ const DiscordIndex = () => {
   }, discord.value.hash)
   function tagRender(props) {
     const s = students.value[props.value]
-    return renderTag(s, false,false,false,props.onClose)
+    return renderTag(s, false, false, false, props.onClose)
   }
 
-  const params = useParams()
-  const loc = useLocation()
+  const loc = (useLocation().pathname + "//").split("/")
+  const params = { category: decodeURIComponent(loc[2]), channel: decodeURIComponent(loc[3]) }
 
-  const currentChannel = useMemo( () => discordChannels.find(c => c.meta.category === params.category && c.meta.name === params.channel), [discordChannels,params]);
-  const content = useMemo( () => renderContent(currentChannel),[students,currentChannel]);
+  const currentChannel = useMemo(() => discordChannels.find(c => c.meta.category === params.category && c.meta.name === params.channel), [discordChannels])
+  let content = useMemo(() => renderContent(currentChannel), [students, currentChannel])
+  if(!currentChannel)
+  content = <>
+    みながくDiscordログにようこそ！
+    <br />
+    詳細は「みながくDiscordのプレイヤーチャンネル」→「#みながく特設Webページチャンネル」を御覧ください。
+  </>
   return (
     <>
+      <SEO title={`ログ/${params.channel}`} />
       <Layout className="discord">
         {renderSider(discordChannels)}
         <Content>{content}</Content>
@@ -234,7 +243,7 @@ const DiscordIndex = () => {
                 </Menu>
               </Tabs.TabPane>
               <Tabs.TabPane tab="Timeline" key="2">
-                { useMemo(() => renderTimeline(discordChannels,filterWord, filterStudents, filterAtTalk), [selectedChannel, filterWord, filterStudents, filterAtTalk, students]) }
+                {useMemo(() => renderTimeline(discordChannels, filterWord, filterStudents, filterAtTalk), [selectedChannel, filterWord, filterStudents, filterAtTalk, students])}
               </Tabs.TabPane>
               <Tabs.TabPane tab="Talks" key="3">
                 <h4>
@@ -248,8 +257,6 @@ const DiscordIndex = () => {
       </Sider>
     )
   }
-
-
 
   function renderContent(channel) {
     console.log("renderContent")
@@ -328,10 +335,10 @@ const DiscordIndex = () => {
           filterStudents.every(s => (filterAtTalk ? t.studentsWithAt.includes(students.value[s].fullname) : t.students.includes(students.value[s].fullname))) &&
           t.messages.some(m => (reg ? reg.test(m.content) : m.content.includes(filterWord)))
         )
-          list.push( {...t,meta:channel.meta})
+          list.push({ ...t, meta: channel.meta })
       }
 
-    list = list.sort( (x,y) => x.messages[0].timestamp.diff(y))
+    list = list.sort((x, y) => x.messages[0].timestamp.diff(y))
     return (
       <List
         className="thread-list"
@@ -342,7 +349,9 @@ const DiscordIndex = () => {
           <List.Item key={x.messages[0].timestamp.format("MMDDhhmm")}>
             <>
               <Link to={`/discord/${x.meta.category}/${x.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`}>
-                {x.meta.category.startsWith("クエスト行動") ? x.meta.category.replace("クエスト行動相談　",""): "" }{x.meta.name}<br />
+                {x.meta.category.startsWith("クエスト行動") ? x.meta.category.replace("クエスト行動相談　", "") : ""}
+                {x.meta.name}
+                <br />
                 <time>
                   {x.messages[0].timestamp.format("M/D hh:mm")}～{x.messages.last().timestamp.format("hh:mm")}
                 </time>
@@ -357,7 +366,7 @@ const DiscordIndex = () => {
   }
   function renderTalks(channel, filterWord, filterStudents, filterAtTalk) {
     if (!channel) return "Channelsからチャネルを選択してください。"
-    let reg = null;
+    let reg = null
     try {
       if (filterWord.startsWith("/")) reg = new RegExp(filterWord.substring(1))
     } catch (e) {}

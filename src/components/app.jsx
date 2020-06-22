@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from "react"
 
-import { Router } from "@reach/router"
+import { Router, Redirect } from "@reach/router"
 import Layout from "./layout"
 import GlobalContext from "../contexts/GlobalContext"
 import StudentsIndex from "./students"
@@ -30,7 +30,6 @@ const App = ({ data, location }) => {
       <Router>
         <StudentPage path={`${prefixes.value.students}/:name`} />
         <StudentsIndex path={`${prefixes.value.students}/`} />
-        <DiscordIndex path={`/discord/:category/:channel`} />
         <DiscordIndex path={`/discord/*`} />
         <IndexPage path="/" />
       </Router>

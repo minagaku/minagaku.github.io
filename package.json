@@ -69,7 +69,7 @@
     "url": "git+https://github.com/gatsbyjs/gatsby-starter-blog.git"
   },
   "scripts": {
-    "build": "gatsby build; cp public/index.html public/404.html",
+    "build": "rm public/*; gatsby build; cp public/index.html public/404.html",
     "develop": "gatsby develop",
     "lint:fix": "eslint --fix \"**/*.{js,jsx}\"",
     "format": "prettier --write \"**/*.{js,jsx,json,md}\"",
