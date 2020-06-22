@@ -34,6 +34,7 @@ async function generateHash(str) {
   }
 }
 function renderChannelMenu(channels) {
+  console.log("renderChannelMenu")
   const channelMap = new Map()
   for (const i of channels) {
     const c = channelMap.get(i.meta.category)
@@ -51,85 +52,68 @@ function renderChannelMenu(channels) {
   ))
   return res
 }
-const goTopButton = <Button onClick={() => window.scrollTo(0, 0)} type="link" icon={<FontAwesomeIcon icon={faLongArrowAltUp} />} />;
+const goTopButton = <Button onClick={() => window.scrollTo(0, 0)} type="link" icon={<FontAwesomeIcon icon={faLongArrowAltUp} />} />
 
 const DiscordIndex = () => {
   const { discord, students, prefixes } = useContext(GlobalContext)
+  function getStudentByName(name) {
+    return students.value.find(x => x.fullname === name)
+  }
+  function renderTag(student, isFullname, iconic, at) {
+    if (!student) return <b>?</b>
+    return (
+      <Popover
+        content={
+          <>
+            <img width="100" src={student.chara_card} />
+            <br />
+            PL: {student.player}
+            {/* <a href="#">このキャラの会話を絞り込み</a> */}
+          </>
+        }
+        title={<Link to={`/${prefixes.value.students}/${student.fullname}`}>{student.fullname}</Link>}
+        trigger="click"
+      >
+        {iconic ? (
+          <Button className={at ? "at-student" : ""} type={student.chara_card ? "text" : "dashed"} icon={<img src={student.chara_card} />}>
+            {student.chara_card ? null : isFullname ? student.fullname : student.firstname}
+          </Button>
+        ) : (
+          <Tag className="discord-select-tag" icon={<img src={student.chara_card} />}>
+            {isFullname ? student.fullname : student.firstname}
+          </Tag>
+        )}
+      </Popover>
+    )
+  }
   const [discordChannels, setDiscordChannels] = useState([])
   useEffect(() => {
     if (!discord.value.hash) return
     fetch(`https://minagaku.z31.web.core.windows.net/${discord.value.hash}.json`)
       .then(r => r.json())
       .then(rd => {
+        for (const r of rd) for (const t of r.talks) for (const m of t.messages) m.timestamp = moment(m.timestamp)
         setDiscordChannels(rd)
       })
   }, discord.value.hash)
   function tagRender(props) {
     const s = students.value[props.value]
-    if (!s) return <b style={{ color: "red" }}>Invalid!{props.value}</b>
-    return (
-      <Tag className="discord-select-tag" icon={<img src={s.chara_card} />} closable={props.closable} onClose={props.onClose}>
-        {s.firstname}
-      </Tag>
-    )
+    return renderTag(s, false)
   }
-
-
 
   const params = useParams()
   const loc = useLocation()
 
+  const currentChannel = useMemo( () => discordChannels.find(c => c.meta.category === params.category && c.meta.name === params.channel), [discordChannels,params]);
+  const content = useMemo( () => renderContent(currentChannel),[students,currentChannel]);
   return (
     <>
       <Layout className="discord">
         {renderSider(discordChannels)}
-        {/* <Content>{renderContent(params.category, params.channel, loc.hash, channelMap, discord.value)}</Content> */}
+        <Content>{content}</Content>
       </Layout>
     </>
   )
-
-  function iconTagRender(value, noAt) {
-    const s = students.value[value]
-    if (!s) return <b style={{ color: "red" }}>!{value}</b>
-    return (
-      <Popover
-        content={
-          <>
-            <img width="100" src={s.chara_card} />
-            <br />
-            PL: {s.player}
-          </>
-        }
-        title={<Link to={`/${prefixes.value.students}/${s.fullname}`}>{s.fullname}</Link>}
-        trigger="click"
-      >
-        <Button className={noAt ? "" : "at-student"} type={s.chara_card ? "text" : "dashed"} icon={<img src={s.chara_card} />}>
-          {s.chara_card ? null : s.firstname}
-        </Button>
-      </Popover>
-    )
-  }
-
-  function contentTagRender(s) {
-    if (!s) return <b style={{ color: "red" }}>!</b>
-    return (
-      <Popover
-        content={
-          <>
-            <img width="100" src={s.chara_card} />
-            <br />
-            PL: {s.player}
-          </>
-        }
-        title={<Link to={`/${prefixes.value.students}/${s.fullname}`}>{s.fullname}</Link>}
-        trigger="hover"
-      >
-        <Tag className="discord-select-tag" icon={<img src={s.chara_card} />}>
-          {s.fullname}
-        </Tag>
-      </Popover>
-    )
-  }
 
   function studentByName(name) {
     return students.value.find(x => x.fullname === name)
@@ -168,7 +152,7 @@ const DiscordIndex = () => {
     const onMenuClick = useCallback(value => {
       setSelected(value)
       setActiveTabKey("3")
-    });
+    })
 
     const opts = useMemo(
       () =>
@@ -198,126 +182,127 @@ const DiscordIndex = () => {
     const channelMenu = useMemo(() => renderChannelMenu(channels), [channels])
 
     return (
-      <Sider zeroWidthTriggerStyle={{ position: "fixed", left: 0, top: "100px" }} defaultCollapsed={true} collapsedWidth="0" breakpoint="lg" style={{ minHeight: "100vh" }} width={250}>
-        <Space style={{ margin: "5px" }}>
-          みながくDC(人柱版)
-          <Button onClick={showModal}>{pass.hash ? <FontAwesomeIcon icon={faCheck} /> : "Pass"}</Button>
-          <Modal
-            title="パスワード"
-            visible={modalVisible}
-            cancelText={null}
-            footer={
-              <Button key="submit" type="primary" onClick={closeModal}>
-                OK
-              </Button>
-            }
-            onCancel={closeModal}
-          >
-            <Input
-              placeholder="パスワード"
-              value={pass.raw}
-              onChange={e => setPass({ raw: e.target.value, hash: null })}
-              addonAfter={pass.hash ? <FontAwesomeIcon icon={faCheck} color="green" /> : ""}
-            />
-          </Modal>
-        </Space>
-        <div className="m-2">
-          <Input placeholder="単語検索" value={filterWord} onChange={setFilterWord} />
-          <Select
-            className="mt-2"
-            placeholder="学生検索"
-            filterOption={studentFilterFunc}
-            mode="multiple"
-            style={{ width: "100%" }}
-            onChange={setFilterStudents}
-            tagRender={tagRender}
-            options={opts}
-          ></Select>
-          <Checkbox checked={filterAtTalk} onChange={s => setFilterAtTalk(s.target.checked)}>
-            @発言だけも検索に含める
-          </Checkbox>
-          <br />
-        </div>
+      <Sider zeroWidthTriggerStyle={{ position: "fixed", left: 0, top: "100px" }} defaultCollapsed={true} collapsedWidth="0" breakpoint="lg" className="sider" width={250}>
+        <div className="sticky top-0">
+          <div>
+            <Space style={{ margin: "5px" }}>
+              みながくDC(人柱版)
+              <Button onClick={showModal}>{pass.hash ? <FontAwesomeIcon icon={faCheck} /> : "Pass"}</Button>
+              <Modal
+                title="パスワード"
+                visible={modalVisible}
+                cancelText={null}
+                footer={
+                  <Button key="submit" type="primary" onClick={closeModal}>
+                    OK
+                  </Button>
+                }
+                onCancel={closeModal}
+              >
+                <Input
+                  placeholder="パスワード"
+                  value={pass.raw}
+                  onChange={e => setPass({ raw: e.target.value, hash: null })}
+                  addonAfter={pass.hash ? <FontAwesomeIcon icon={faCheck} color="green" /> : ""}
+                />
+              </Modal>
+            </Space>
+            <div className="m-2">
+              <Input placeholder="単語検索" value={filterWord} onChange={setFilterWord} />
+              <Select
+                className="mt-2"
+                placeholder="学生検索"
+                filterOption={studentFilterFunc}
+                mode="multiple"
+                style={{ width: "100%" }}
+                onChange={setFilterStudents}
+                tagRender={tagRender}
+                options={opts}
+              ></Select>
+              <Checkbox checked={filterAtTalk} onChange={s => setFilterAtTalk(s.target.checked)}>
+                @発言だけも検索に含める
+              </Checkbox>
+              <br />
+            </div>
 
-        <Tabs activeKey={activeTabKey} onChange={setActiveTabKey} type="card" size="small" tabBarExtraContent={goTopButton}>
-          <Tabs.TabPane tab="Channels" key="1">
-            <Menu mode="inline" onSelect={onMenuClick} onOpenChange={setMenuOpend} openKeys={menuOpend} inlineCollapsed={false}>
-              {channelMenu}
-            </Menu>
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Timeline" key="2">
-            Comming Soon.
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Talks" key="3">
-            {selectedChannel?.meta.name}
-            {renderSubTimeLine(selectedChannel)}
-          </Tabs.TabPane>
-        </Tabs>
+            <Tabs activeKey={activeTabKey} onChange={setActiveTabKey} type="card" size="small" tabBarExtraContent={goTopButton}>
+              <Tabs.TabPane tab="Channels" key="1">
+                <Menu mode="inline" onSelect={onMenuClick} onOpenChange={setMenuOpend} openKeys={menuOpend} inlineCollapsed={false}>
+                  {channelMenu}
+                </Menu>
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Timeline" key="2">
+                Comming Soon.
+              </Tabs.TabPane>
+              <Tabs.TabPane tab="Talks" key="3">
+                <h4>
+                  {selectedChannel?.meta.category}/{selectedChannel?.meta.name}
+                </h4>
+                {useMemo(() => renderTalks(selectedChannel, filterWord, filterStudents, filterAtTalk), [selectedChannel, filterWord, filterStudents, filterAtTalk, students])}
+              </Tabs.TabPane>
+            </Tabs>
+          </div>
+        </div>
       </Sider>
     )
   }
 
-  function renderContent(category, chan, hash, map, discord) {
-    if (!category || !chan || map.size === 0) return
-    const channelList = map.get(category)
-    const channel = channelList.find(x => x.channel.name === chan)
+  function renderContent(channel) {
+    console.log("renderContent")
+    if (!channel) return null
 
-    const threads = getThread(channel, discord.id2pc)
-    return threads.map(x => (
+    return channel.talks.map(x => (
       <div className="talk">
-        <div className="id-hash" id={x.messages[0][0].timestamp2.format("MMDDhhmm")} />
+        <div className="id-hash" id={x.messages[0].timestamp.format("MMDDhhmm")} />
         {
           <div className="talk-header">
             <div>
-              <Link to={`/discord/${channel.channel.category}/${channel.channel.name}#${x.messages[0][0].timestamp2.format("MMDDhhmm")}`}>
+              <Link to={`/discord/${channel.meta.category}/${channel.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`}>
                 <time>
-                  {x.messages[0][0].timestamp2.format("M/D hh:mm")}～{x.messages.last().last().timestamp2.format("M/D hh:mm")}
+                  {x.messages[0].timestamp.format("M/D hh:mm")}～{x.messages.last().timestamp.format("M/D hh:mm")}
                 </time>
               </Link>
               ({x.messages.length}件)
             </div>
-            <div>{x.students.map(st => contentTagRender(studentByName(st)))}</div>
+            <div>{x.students.map(st => renderTag(studentByName(st), true))}</div>
           </div>
         }
         {x.messages.map(y => (
           <>
             <div className="talk-content-header">
               <div className="img-container">
-                <div className="chara-image" style={{ backgroundImage: `url(${studentByName(y[0].author.pcname)?.chara_card})` }}></div>
+                <div className="chara-image" style={{ backgroundImage: `url(${studentByName(y.author)?.chara_card})` }}></div>
               </div>
               <h4>
-                {y[0].author.pcname}　<small>{y[0].timestamp2.format("M/D hh:mm")}</small>
+                {y.author}　<small>{y.timestamp.format("M/D hh:mm")}</small>
               </h4>
               <div>
-                {y.map(z => (
-                  <div>
-                    {z.content.split("\n").map(line => {
-                      const [normal, at] = line.split(/[@＠]/g, 2)
-                      return (
-                        <>
-                          {normal}
-                          {at ? <span className="at-talk">@{at}</span> : ""}
-                          <br />
-                        </>
-                      )
-                    })}
-                    {z.attachments.map(a => (
-                      <a href={a.url}>
-                        <img className="attachment" src={a.url} />
-                      </a>
-                    ))}
-                    {z.reactions.length > 0 ? (
-                      <div className="reactions">
-                        {z.reactions.map(r => (
-                          <span className="reaction">
-                            <img src={r.emoji.imageUrl} />
-                            {r.count}
-                          </span>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
+                
+                {y.content.split("\n").map(line => {
+                  const [normal, at] = line.split(/[@＠]/g, 2)
+                  return (
+                    <>
+                      {normal}
+                      {at ? <span className="at-talk">@{at}</span> : ""}
+                      <br />
+                    </>
+                  )
+                })}
+                {y.attachments.map(a => (
+                  <a href={a.url}>
+                    <img className="attachment" src={a.url} />
+                  </a>
                 ))}
+                {y.reactions.length > 0 ? (
+                  <div className="reactions">
+                    {y.reactions.map(r => (
+                      <span className="reaction">
+                        <img src={r.emoji.imageUrl} />
+                        {r.count}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
             </div>
           </>
@@ -327,12 +312,21 @@ const DiscordIndex = () => {
     ))
   }
 
-  function renderSubTimeLine(channel) {
+  function renderTalks(channel, filterWord, filterStudents, filterAtTalk) {
+    console.log("renderTalk!");
     if (!channel) return "Channelsからチャネルを選択してください。"
-    // if (studentFilter.length !== 0)
-    //   if (filterAtTalk) final = final.filter(talk => studentFilter.every(st => talk.students.some(ts => students.value[st].fullname === ts)))
-    //   else final = final.filter(talk => studentFilter.every(st => talk.studentsNoAt.some(ts => students.value[st].fullname === ts)))
-    // if (filterWord !== "") final = final.filter(talk => talk.messages.some(t => t.some(t2 => t2.content.includes(filterWord))))
+    const reg = filterWord.startsWith("/") ? new RegExp(filterWord.substr(1)) : null
+    let list = []
+    if (filterStudents.length !== 0) {
+      for (const t of channel.talks)
+        if (
+          filterStudents.every(s => (filterAtTalk ? t.studentsWithAt.includes(students.value[s].fullname) : t.students.includes(students.value[s].fullname))) &&
+          t.messages.some(m => (reg ? reg.test(m.content) : m.content.includes(filterWord)))
+        )
+          list.push(t)
+    } else {
+      list = channel.talks
+    }
 
     return (
       <Anchor affix={false}>
@@ -340,25 +334,18 @@ const DiscordIndex = () => {
           className="thread-list"
           size="small"
           itemLayout="horizontal"
-          dataSource={channel.talks}
+          dataSource={list}
           renderItem={x => (
-            <List.Item>
+            <List.Item key={x.messages[0].timestamp.format("MMDDhhmm")}>
               <>
-                <Link to={`/discord/${channel.meta.category}/${channel.meta.name}#${moment(x.messages[0].timestamp).format("MMDDhhmm")}`}>
-                  <Anchor.Link href={`/discord/${channel.meta.category}/${channel.meta.name}#${moment(x.messages[0].timestamp).format("MMDDhhmm")}`} />
+                <Link to={`/discord/${channel.meta.category}/${channel.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`}>
+                  <Anchor.Link href={`/discord/${channel.meta.category}/${channel.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`} />
                   <time>
-                    {moment(x.messages[0].timestamp).format("M/D hh:mm")}～{moment(x.messages.last().timestamp).format("hh:mm")}
+                    {x.messages[0].timestamp.format("M/D hh:mm")}～{x.messages.last().timestamp.format("hh:mm")}
                   </time>
                   ({x.messages.length})
                 </Link>
-                <div>
-                  {x.studentsWithAt.map(st =>
-                    iconTagRender(
-                      students.value.findIndex(x => x.fullname === st),
-                      x.students.includes(st)
-                    )
-                  )}
-                </div>
+                <div>{x.students.map(st => renderTag(getStudentByName(st), true, true, !x.students.includes(st)))}</div>
               </>
             </List.Item>
           )}
