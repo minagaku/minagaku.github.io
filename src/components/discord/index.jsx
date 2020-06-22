@@ -60,7 +60,7 @@ const DiscordIndex = () => {
     return students.value.find(x => x.fullname === name)
   }
   function renderTag(student, isFullname, iconic, at,onClose) {
-    if (!student) return <b>?</b>
+    if (!student) return <b key="?">?</b>
     return (
       <Popover
         key={student.fullname}
