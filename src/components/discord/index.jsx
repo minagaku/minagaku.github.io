@@ -17,6 +17,7 @@ if (!Array.prototype.last) {
   }
 }
 
+
 async function generateHash(str) {
   // generate hash!
   const hex = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str))
@@ -34,14 +35,13 @@ async function generateHash(str) {
   }
 }
 function renderChannelMenu(channels) {
-  console.log("renderChannelMenu")
   const channelMap = new Map()
   for (const i of channels) {
     const c = channelMap.get(i.meta.category)
     if (c) c.push(i)
     else channelMap.set(i.meta.category, [i])
   }
-  const res = Array.from(channelMap.entries()).map(([cat, chan]) => (
+  const res = Array.from(channelMap.entries()).reverse().map(([cat, chan]) => (
     <SubMenu key={cat} title={cat}>
       {chan.map(x => (
         <Menu.Item icon={<b style={{ color: "#666" }}># </b>} key={x.index}>
@@ -59,10 +59,11 @@ const DiscordIndex = () => {
   function getStudentByName(name) {
     return students.value.find(x => x.fullname === name)
   }
-  function renderTag(student, isFullname, iconic, at) {
+  function renderTag(student, isFullname, iconic, at,onClose) {
     if (!student) return <b>?</b>
     return (
       <Popover
+        key={student.fullname}
         content={
           <>
             <img width="100" src={student.chara_card} />
@@ -79,7 +80,7 @@ const DiscordIndex = () => {
             {student.chara_card ? null : isFullname ? student.fullname : student.firstname}
           </Button>
         ) : (
-          <Tag className="discord-select-tag" icon={<img src={student.chara_card} />}>
+          <Tag className="discord-select-tag" icon={<img src={student.chara_card} />} closable={onClose ? true : false} onClose={onClose}>
             {isFullname ? student.fullname : student.firstname}
           </Tag>
         )}
@@ -98,7 +99,7 @@ const DiscordIndex = () => {
   }, discord.value.hash)
   function tagRender(props) {
     const s = students.value[props.value]
-    return renderTag(s, false)
+    return renderTag(s, false,false,false,props.onClose)
   }
 
   const params = useParams()
@@ -129,6 +130,7 @@ const DiscordIndex = () => {
     }, [setModalVisible])
     const [filterStudents, setFilterStudents] = useState([])
     const [filterWord, setFilterWord] = useState("")
+    const onFilterWord = useCallback(e => setFilterWord(e.target.value), [setFilterWord])
     const [filterAtTalk, setFilterAtTalk] = useState(true)
     const [pass, setPass] = useState({
       raw: discord.value.password,
@@ -182,8 +184,8 @@ const DiscordIndex = () => {
     const channelMenu = useMemo(() => renderChannelMenu(channels), [channels])
 
     return (
-      <Sider zeroWidthTriggerStyle={{ position: "fixed", left: 0, top: "100px" }} defaultCollapsed={true} collapsedWidth="0" breakpoint="lg" className="sider" width={250}>
-        <div className="sticky top-0">
+      <Sider zeroWidthTriggerStyle={{ position: "fixed", left: 0, top: "100px" }} defaultCollapsed={true} collapsedWidth="0" breakpoint="md" className="sider" width={300}>
+        <div className="sticky top-0 sider-in">
           <div>
             <Space style={{ margin: "5px" }}>
               みながくDC(人柱版)
@@ -208,7 +210,7 @@ const DiscordIndex = () => {
               </Modal>
             </Space>
             <div className="m-2">
-              <Input placeholder="単語検索" value={filterWord} onChange={setFilterWord} />
+              <Input.Search placeholder="単語検索" onSearch={setFilterWord} />
               <Select
                 className="mt-2"
                 placeholder="学生検索"
@@ -227,12 +229,12 @@ const DiscordIndex = () => {
 
             <Tabs activeKey={activeTabKey} onChange={setActiveTabKey} type="card" size="small" tabBarExtraContent={goTopButton}>
               <Tabs.TabPane tab="Channels" key="1">
-                <Menu mode="inline" onSelect={onMenuClick} onOpenChange={setMenuOpend} openKeys={menuOpend} inlineCollapsed={false}>
+                <Menu mode="inline" onSelect={onMenuClick} onOpenChange={setMenuOpend} openKeys={menuOpend}>
                   {channelMenu}
                 </Menu>
               </Tabs.TabPane>
               <Tabs.TabPane tab="Timeline" key="2">
-                Comming Soon.
+                { useMemo(() => renderTimeline(discordChannels,filterWord, filterStudents, filterAtTalk), [selectedChannel, filterWord, filterStudents, filterAtTalk, students]) }
               </Tabs.TabPane>
               <Tabs.TabPane tab="Talks" key="3">
                 <h4>
@@ -246,6 +248,8 @@ const DiscordIndex = () => {
       </Sider>
     )
   }
+
+
 
   function renderContent(channel) {
     console.log("renderContent")
@@ -270,14 +274,13 @@ const DiscordIndex = () => {
         {x.messages.map(y => (
           <>
             <div className="talk-content-header">
-              <div className="img-container">
+              <Link to={`/${prefixes.value.students}/${studentByName(y.author)?.fullname}`} className="img-container">
                 <div className="chara-image" style={{ backgroundImage: `url(${studentByName(y.author)?.chara_card})` }}></div>
-              </div>
+              </Link>
               <h4>
                 {y.author}　<small>{y.timestamp.format("M/D hh:mm")}</small>
               </h4>
               <div>
-                
                 {y.content.split("\n").map(line => {
                   const [normal, at] = line.split(/[@＠]/g, 2)
                   return (
@@ -312,10 +315,52 @@ const DiscordIndex = () => {
     ))
   }
 
+  function renderTimeline(discordChannels, filterWord, filterStudents, filterAtTalk) {
+    if (filterStudents.length === 0 && filterWord === "") return null
+    let reg = null
+    try {
+      if (filterWord.startsWith("/")) reg = new RegExp(filterWord.substring(1))
+    } catch {}
+    let list = []
+    for (const channel of discordChannels)
+      for (const t of channel.talks) {
+        if (
+          filterStudents.every(s => (filterAtTalk ? t.studentsWithAt.includes(students.value[s].fullname) : t.students.includes(students.value[s].fullname))) &&
+          t.messages.some(m => (reg ? reg.test(m.content) : m.content.includes(filterWord)))
+        )
+          list.push( {...t,meta:channel.meta})
+      }
+
+    list = list.sort( (x,y) => x.messages[0].timestamp.diff(y))
+    return (
+      <List
+        className="thread-list"
+        size="small"
+        itemLayout="horizontal"
+        dataSource={list}
+        renderItem={x => (
+          <List.Item key={x.messages[0].timestamp.format("MMDDhhmm")}>
+            <>
+              <Link to={`/discord/${x.meta.category}/${x.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`}>
+                {x.meta.category.startsWith("クエスト行動") ? x.meta.category.replace("クエスト行動相談　",""): "" }{x.meta.name}<br />
+                <time>
+                  {x.messages[0].timestamp.format("M/D hh:mm")}～{x.messages.last().timestamp.format("hh:mm")}
+                </time>
+                ({x.messages.length})
+              </Link>
+              <div>{x.studentsWithAt.map(st => renderTag(getStudentByName(st), true, true, !x.students.includes(st)))}</div>
+            </>
+          </List.Item>
+        )}
+      />
+    )
+  }
   function renderTalks(channel, filterWord, filterStudents, filterAtTalk) {
-    console.log("renderTalk!");
     if (!channel) return "Channelsからチャネルを選択してください。"
-    const reg = filterWord.startsWith("/") ? new RegExp(filterWord.substr(1)) : null
+    let reg = null;
+    try {
+      if (filterWord.startsWith("/")) reg = new RegExp(filterWord.substring(1))
+    } catch (e) {}
     let list = []
     if (filterStudents.length !== 0) {
       for (const t of channel.talks)
@@ -345,7 +390,7 @@ const DiscordIndex = () => {
                   </time>
                   ({x.messages.length})
                 </Link>
-                <div>{x.students.map(st => renderTag(getStudentByName(st), true, true, !x.students.includes(st)))}</div>
+                <div>{x.studentsWithAt.map(st => renderTag(getStudentByName(st), true, true, !x.students.includes(st)))}</div>
               </>
             </List.Item>
           )}
