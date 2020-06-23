@@ -55,9 +55,28 @@ function renderChannelMenu(channels) {
   return res
 }
 const goTopButton = <Button onClick={() => window.scrollTo(0, 0)} type="link" icon={<FontAwesomeIcon icon={faLongArrowAltUp} />} />
+let tick = false;
 
 const DiscordIndex = () => {
   const { discord, students, prefixes } = useContext(GlobalContext)
+  const [activeAnchor,setActiveAnchor] = useState(null);
+
+  useEffect(() => {
+    function handleScroll() {
+      const obj = document.querySelectorAll(".id-hash");
+      for (let i = 1; i < obj.length ; i++) {
+        if (obj[i].offsetTop > window.scrollY + 10) {
+          setActiveAnchor(obj[i-1].id)
+          return
+        }
+      }
+      setActiveAnchor(null)
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    };
+  }, []);
   function getStudentByName(name) {
     return students.value.find(x => x.fullname === name)
   }
@@ -107,14 +126,16 @@ const DiscordIndex = () => {
   const loc = (useLocation().pathname + "//").split("/")
   const params = { category: decodeURIComponent(loc[2]), channel: decodeURIComponent(loc[3]) }
 
-  const currentChannel = useMemo(() => discordChannels.find(c => c.meta.category === params.category && c.meta.name === params.channel), [discordChannels])
+  const currentChannel = useMemo(() => discordChannels.find(c => c.meta.category === params.category && c.meta.name === params.channel), [discordChannels, params])
   let content = useMemo(() => renderContent(currentChannel), [students, currentChannel])
-  if(!currentChannel)
-  content = <>
-    みながくDiscordログにようこそ！
-    <br />
-    詳細は「みながくDiscordのプレイヤーチャンネル」→「#みながく特設Webページチャンネル」を御覧ください。
-  </>
+  if (!currentChannel)
+    content = (
+      <>
+        みながくDiscordログにようこそ！
+        <br />
+        詳細は「みながくDiscordのプレイヤーチャンネル」→「#みながく特設Webページチャンネル」を御覧ください。
+      </>
+    )
   return (
     <>
       <SEO title={`ログ/${params.channel}`} />
@@ -249,7 +270,7 @@ const DiscordIndex = () => {
                 <h4>
                   {selectedChannel?.meta.category}/{selectedChannel?.meta.name}
                 </h4>
-                {useMemo(() => renderTalks(selectedChannel, filterWord, filterStudents, filterAtTalk), [selectedChannel, filterWord, filterStudents, filterAtTalk, students])}
+                {useMemo(() => renderTalks(selectedChannel, filterWord, filterStudents, filterAtTalk), [selectedChannel, filterWord, filterStudents, filterAtTalk, students, activeAnchor])}
               </Tabs.TabPane>
             </Tabs>
           </div>
@@ -275,7 +296,7 @@ const DiscordIndex = () => {
               </Link>
               ({x.messages.length}件)
             </div>
-            <div>{x.students.map(st => renderTag(studentByName(st), true))}</div>
+            <div>{x.studentsWithAt.map(st => renderTag(studentByName(st), true,false,!x.students.includes(st)))}</div>
           </div>
         }
         {x.messages.map(y => (
@@ -338,7 +359,7 @@ const DiscordIndex = () => {
           list.push({ ...t, meta: channel.meta })
       }
 
-    list = list.sort((x, y) => x.messages[0].timestamp.diff(y))
+    list = list.sort((x, y) => x.messages[0].timestamp.diff(y.messages[0].timestamp))
     return (
       <List
         className="thread-list"
@@ -365,6 +386,7 @@ const DiscordIndex = () => {
     )
   }
   function renderTalks(channel, filterWord, filterStudents, filterAtTalk) {
+    console.log("renderTalks")
     if (!channel) return "Channelsからチャネルを選択してください。"
     let reg = null
     try {
@@ -383,28 +405,23 @@ const DiscordIndex = () => {
     }
 
     return (
-      <Anchor affix={false}>
-        <List
-          className="thread-list"
-          size="small"
-          itemLayout="horizontal"
-          dataSource={list}
-          renderItem={x => (
-            <List.Item key={x.messages[0].timestamp.format("MMDDhhmm")}>
-              <>
-                <Link to={`/discord/${channel.meta.category}/${channel.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`}>
-                  <Anchor.Link href={`/discord/${channel.meta.category}/${channel.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`} />
-                  <time>
-                    {x.messages[0].timestamp.format("M/D hh:mm")}～{x.messages.last().timestamp.format("hh:mm")}
-                  </time>
-                  ({x.messages.length})
-                </Link>
-                <div>{x.studentsWithAt.map(st => renderTag(getStudentByName(st), true, true, !x.students.includes(st)))}</div>
-              </>
-            </List.Item>
-          )}
-        />
-      </Anchor>
+      <List
+        className="thread-list"
+        size="small"
+        itemLayout="horizontal"
+        dataSource={list}
+        renderItem={x => (
+          <List.Item key={x.messages[0].timestamp.format("MMDDhhmm")}>
+              <Link className={ activeAnchor === x.messages[0].timestamp.format("MMDDhhmm") ? "active" : "" } to={`/discord/${channel.meta.category}/${channel.meta.name}#${x.messages[0].timestamp.format("MMDDhhmm")}`}>
+                <time>
+                  {x.messages[0].timestamp.format("M/D hh:mm")}～{x.messages.last().timestamp.format("hh:mm")}
+                </time>
+                ({x.messages.length})
+              </Link>
+              <div>{x.studentsWithAt.map(st => renderTag(getStudentByName(st), true, true, !x.students.includes(st)))}</div>
+          </List.Item>
+        )}
+      />
     )
   }
 }
