@@ -17,6 +17,12 @@ module.exports = {
   },
   plugins: [
     {
+      resolve: "gatsby-plugin-google-analytics",
+      options: {
+        trackingId: "UA-92536246-3",
+      },
+    },
+    {
       resolve: "gatsby-plugin-sass",
       options: {
         postCssPlugins: [
